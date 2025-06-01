@@ -1,0 +1,35 @@
+{
+  "settings": [
+    {
+      "settingInstance": {
+        "settingDefinitionId": "user_vendor_msft_policy_config_admx_taskbar_nopinningstoretotaskbar",
+        "choiceSettingValue": {
+          "settingValueTemplateReference": null,
+          "value": "user_vendor_msft_policy_config_admx_taskbar_nopinningstoretotaskbar_1",
+          "children": []
+        },
+        "settingInstanceTemplateReference": null,
+        "@odata.type": "#microsoft.graph.deviceManagementConfigurationChoiceSettingInstance"
+      },
+      "id": "0"
+    },
+    {
+      "settingInstance": {
+        "settingDefinitionId": "user_vendor_msft_policy_config_admx_windowsstore_removewindowsstore_1",
+        "choiceSettingValue": {
+          "settingValueTemplateReference": null,
+          "value": "user_vendor_msft_policy_config_admx_windowsstore_removewindowsstore_1_1",
+          "children": []
+        },
+        "settingInstanceTemplateReference": null,
+        "@odata.type": "#microsoft.graph.deviceManagementConfigurationChoiceSettingInstance"
+      },
+      "id": "1"
+    }
+  ],
+  "description": "",
+  "id": "892b23e7-ee35-4c64-9183-534bd12bf7cd",
+  "displayName": "Application - Microsoft Store",
+  "technologies": "mdm",
+  "platforms": "windows10"
+}

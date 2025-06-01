@@ -1,0 +1,35 @@
+{
+  "settings": [
+    {
+      "settingInstance": {
+        "settingDefinitionId": "device_vendor_msft_policy_config_search_allowcloudsearch",
+        "choiceSettingValue": {
+          "settingValueTemplateReference": null,
+          "value": "device_vendor_msft_policy_config_search_allowcloudsearch_1",
+          "children": []
+        },
+        "settingInstanceTemplateReference": null,
+        "@odata.type": "#microsoft.graph.deviceManagementConfigurationChoiceSettingInstance"
+      },
+      "id": "0"
+    },
+    {
+      "settingInstance": {
+        "settingDefinitionId": "device_vendor_msft_policy_config_search_donotusewebresults",
+        "choiceSettingValue": {
+          "settingValueTemplateReference": null,
+          "value": "device_vendor_msft_policy_config_search_donotusewebresults_0",
+          "children": []
+        },
+        "settingInstanceTemplateReference": null,
+        "@odata.type": "#microsoft.graph.deviceManagementConfigurationChoiceSettingInstance"
+      },
+      "id": "1"
+    }
+  ],
+  "description": "",
+  "id": "abf55a65-acec-4629-85f9-e9e9b11fb111",
+  "displayName": "Privacy - Search",
+  "technologies": "mdm",
+  "platforms": "windows10"
+}

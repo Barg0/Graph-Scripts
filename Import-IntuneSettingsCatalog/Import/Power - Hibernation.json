@@ -1,0 +1,22 @@
+{
+  "settings": [
+    {
+      "settingInstance": {
+        "settingDefinitionId": "device_vendor_msft_policy_config_power_allowhibernate",
+        "choiceSettingValue": {
+          "settingValueTemplateReference": null,
+          "value": "device_vendor_msft_policy_config_power_allowhibernate_0",
+          "children": []
+        },
+        "settingInstanceTemplateReference": null,
+        "@odata.type": "#microsoft.graph.deviceManagementConfigurationChoiceSettingInstance"
+      },
+      "id": "0"
+    }
+  ],
+  "description": "",
+  "id": "89f58093-79f1-494a-b863-cc43bf82ef3b",
+  "displayName": "Power - Hibernation",
+  "technologies": "mdm",
+  "platforms": "windows10"
+}

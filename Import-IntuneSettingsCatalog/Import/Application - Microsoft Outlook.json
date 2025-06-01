@@ -1,0 +1,74 @@
+{
+  "settings": [
+    {
+      "settingInstance": {
+        "settingDefinitionId": "user_vendor_msft_policy_config_outlk16v2~policy~l_microsoftofficeoutlook~l_toolsaccounts~l_exchangesettings_l_automaticallyconfigureprofilebasedonactive",
+        "choiceSettingValue": {
+          "settingValueTemplateReference": null,
+          "value": "user_vendor_msft_policy_config_outlk16v2~policy~l_microsoftofficeoutlook~l_toolsaccounts~l_exchangesettings_l_automaticallyconfigureprofilebasedonactive_1",
+          "children": []
+        },
+        "settingInstanceTemplateReference": null,
+        "@odata.type": "#microsoft.graph.deviceManagementConfigurationChoiceSettingInstance"
+      },
+      "id": "0"
+    },
+    {
+      "settingInstance": {
+        "settingDefinitionId": "user_vendor_msft_policy_config_outlk16v14~policy~l_microsoftofficeoutlook~l_outlookoptions~l_other_l_donewoutlookautomigration",
+        "choiceSettingValue": {
+          "settingValueTemplateReference": null,
+          "value": "user_vendor_msft_policy_config_outlk16v14~policy~l_microsoftofficeoutlook~l_outlookoptions~l_other_l_donewoutlookautomigration_0",
+          "children": []
+        },
+        "settingInstanceTemplateReference": null,
+        "@odata.type": "#microsoft.graph.deviceManagementConfigurationChoiceSettingInstance"
+      },
+      "id": "1"
+    },
+    {
+      "settingInstance": {
+        "settingDefinitionId": "user_vendor_msft_policy_config_outlk16v11~policy~l_microsoftofficeoutlook~l_outlookoptions~l_other_l_hidenewoutlooktoggle",
+        "choiceSettingValue": {
+          "settingValueTemplateReference": null,
+          "value": "user_vendor_msft_policy_config_outlk16v11~policy~l_microsoftofficeoutlook~l_outlookoptions~l_other_l_hidenewoutlooktoggle_1",
+          "children": []
+        },
+        "settingInstanceTemplateReference": null,
+        "@odata.type": "#microsoft.graph.deviceManagementConfigurationChoiceSettingInstance"
+      },
+      "id": "2"
+    },
+    {
+      "settingInstance": {
+        "settingDefinitionId": "user_vendor_msft_policy_config_outlk16v14~policy~l_microsoftofficeoutlook~l_outlookoptions~l_other_l_newoutlookautomigrationretryintervals",
+        "choiceSettingValue": {
+          "settingValueTemplateReference": null,
+          "value": "user_vendor_msft_policy_config_outlk16v14~policy~l_microsoftofficeoutlook~l_outlookoptions~l_other_l_newoutlookautomigrationretryintervals_0",
+          "children": []
+        },
+        "settingInstanceTemplateReference": null,
+        "@odata.type": "#microsoft.graph.deviceManagementConfigurationChoiceSettingInstance"
+      },
+      "id": "3"
+    },
+    {
+      "settingInstance": {
+        "settingDefinitionId": "user_vendor_msft_policy_config_outlk16v2~policy~l_microsoftofficeoutlook~l_outlookoptions~l_preferences~l_calendaroptions_l_restupdatesforcalendar",
+        "choiceSettingValue": {
+          "settingValueTemplateReference": null,
+          "value": "user_vendor_msft_policy_config_outlk16v2~policy~l_microsoftofficeoutlook~l_outlookoptions~l_preferences~l_calendaroptions_l_restupdatesforcalendar_1",
+          "children": []
+        },
+        "settingInstanceTemplateReference": null,
+        "@odata.type": "#microsoft.graph.deviceManagementConfigurationChoiceSettingInstance"
+      },
+      "id": "4"
+    }
+  ],
+  "description": "",
+  "id": "f1c45993-fdb0-4f88-a9ba-6dd42562145b",
+  "displayName": "Application - Microsoft Outlook",
+  "technologies": "mdm",
+  "platforms": "windows10"
+}

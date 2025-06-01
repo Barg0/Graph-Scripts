@@ -1,0 +1,22 @@
+{
+  "settings": [
+    {
+      "settingInstance": {
+        "settingDefinitionId": "user_vendor_msft_policy_config_admx_startmenu_noinstrumentation",
+        "choiceSettingValue": {
+          "settingValueTemplateReference": null,
+          "value": "user_vendor_msft_policy_config_admx_startmenu_noinstrumentation_1",
+          "children": []
+        },
+        "settingInstanceTemplateReference": null,
+        "@odata.type": "#microsoft.graph.deviceManagementConfigurationChoiceSettingInstance"
+      },
+      "id": "0"
+    }
+  ],
+  "description": "",
+  "id": "ae7e9989-4cfc-4566-a074-66e9cabe330a",
+  "displayName": "Privacy - Tracking",
+  "technologies": "mdm",
+  "platforms": "windows10"
+}
