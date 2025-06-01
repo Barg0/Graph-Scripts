@@ -1,0 +1,20 @@
+{
+  "displayName": "Multi-user - Microsoft OneDrive",
+  "description": null,
+  "omaSettings": [
+    {
+      "displayName": "OneDrive Sync",
+      "description": null,
+      "omaUri": "./Device/Vendor/MSFT/Policy/Config/System/DisableOneDriveFileSync",
+      "value": 0,
+      "odataType": "#microsoft.graph.omaSettingInteger"
+    },
+    {
+      "displayName": "OneDrive",
+      "description": null,
+      "omaUri": "./Device/Vendor/MSFT/Policy/Config/ControlPolicyConflict/MDMWinsOverGP",
+      "value": 1,
+      "odataType": "#microsoft.graph.omaSettingInteger"
+    }
+  ]
+}

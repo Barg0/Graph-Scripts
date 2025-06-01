@@ -1,0 +1,20 @@
+{
+  "displayName": "Network Profile - Domain",
+  "description": null,
+  "omaSettings": [
+    {
+      "displayName": "TLSAuthenticationEndpoint",
+      "description": null,
+      "omaUri": "./Device/Vendor/MSFT/Policy/Config/NetworkListManager/AllowedTlsAuthenticationEndpoints",
+      "value": "****",
+      "odataType": "#microsoft.graph.omaSettingString"
+    },
+    {
+      "displayName": "TLSAuthenticationNetworkName",
+      "description": null,
+      "omaUri": "./Device/Vendor/MSFT/Policy/Config/NetworkListManager/ConfiguredTLSAuthenticationNetworkName",
+      "value": "****",
+      "odataType": "#microsoft.graph.omaSettingString"
+    }
+  ]
+}
