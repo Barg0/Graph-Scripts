@@ -152,13 +152,9 @@ try {
 # ---------------------------[ Get Custom Profiles ]---------------------------
 try {
     $allConfigs = Get-MgDeviceManagementDeviceConfiguration
-    $customConfigs = $allProfiles | Where-Object {
-    ($_.AdditionalProperties.'@odata.type' -notlike "#microsoft.graph.macOS*") -and
-    ($_.AdditionalProperties.'@odata.type' -notlike "#microsoft.graph.ios*") -and
-    ($_.AdditionalProperties.'@odata.type' -notlike "#microsoft.graph.android*") -and
-    ($_.AdditionalProperties.'@odata.type' -ne "#microsoft.graph.windows10CustomConfiguration")
-}
-
+    $customConfigs = $allConfigs | Where-Object {
+        $_.AdditionalProperties.'@odata.type' -eq '#microsoft.graph.windows10CustomConfiguration'
+    }
 
     if ($customConfigs.Count -eq 0) {
         Write-Log "No custom OMA-URI configuration profiles found." -Tag "Error"
