@@ -1,0 +1,11 @@
+UserPrincipalName,AccountEnabled,DisplayName,FirstName,LastName,UserType,JobTitle,CompanyName,Department,StreetAddress,City,StateOrProvince,PostalCode,Country,BusinessPhone,MobilePhone,FaxNumber
+alice.miller@contoso.com,true,Alice Miller,Alice,Miller,Member,HR Manager,Contoso Ltd,Human Resources,101 First St,Berlin,Berlin,10115,DE,03011110001,01701110001,03011119991
+bob.schmidt@contoso.com,true,Bob Schmidt,Bob,Schmidt,Member,IT Support,Contoso Ltd,IT,102 Second St,Munich,Bayern,80331,DE,08922220002,01702220002,08922229992
+carla.hoffman@contoso.com,true,Carla Hoffman,Carla,Hoffman,Member,Finance Analyst,Contoso Ltd,Finance,103 Third St,Hamburg,Hamburg,20095,DE,04033330003,01703330003,04033339993
+daniel.weber@contoso.com,true,Daniel Weber,Daniel,Weber,Member,Marketing Lead,Contoso Ltd,Marketing,104 Fourth St,Stuttgart,Baden-Württemberg,70173,DE,07114444004,01704440004,07114449994
+emma.schneider@contoso.com,true,Emma Schneider,Emma,Schneider,Member,Project Manager,Contoso Ltd,Projects,105 Fifth St,Düsseldorf,NRW,40213,DE,02115555005,01705550005,02115559995
+felix.kruger@contoso.com,true,Felix Kruger,Felix,Kruger,Member,Engineer,Contoso Ltd,Engineering,106 Sixth St,Frankfurt,Hessen,60311,DE,06966660006,01706660006,06966669996
+greta.schulz@contoso.com,true,Greta Schulz,Greta,Schulz,Member,Legal Counsel,Contoso Ltd,Legal,107 Seventh St,Leipzig,Sachsen,04109,DE,03417777007,01707770007,03417779997
+hans.fischer@contoso.com,true,Hans Fischer,Hans,Fischer,Member,Operations Manager,Contoso Ltd,Operations,108 Eighth St,Hannover,Niedersachsen,30159,DE,05118888008,01708880008,05118889998
+irene.maier@contoso.com,true,Irene Maier,Irene,Maier,Member,Sales Executive,Contoso Ltd,Sales,109 Ninth St,Bremen,Bremen,28195,DE,04219999009,01709990009,04219999999
+jens.wagner@contoso.com,true,Jens Wagner,Jens,Wagner,Member,Account Manager,Contoso Ltd,Accounts,110 Tenth St,Nuremberg,Bayern,90402,DE,09119990010,01701000010,09119990990
