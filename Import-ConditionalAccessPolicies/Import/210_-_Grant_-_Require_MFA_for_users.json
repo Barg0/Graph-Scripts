@@ -1,0 +1,116 @@
+{
+  "grantControls": {
+    "authenticationStrength@odata.context": "https://graph.microsoft.com/beta/$metadata#identity/conditionalAccess/policies('6ea18b43-80c7-4611-bacc-3c015e4c8e3e')/grantControls/authenticationStrength/$entity",
+    "customAuthenticationFactors": [],
+    "authenticationStrength": {
+      "requirementsSatisfied": "mfa",
+      "description": "Combinations of methods that satisfy strong authentication, such as a password + SMS",
+      "allowedCombinations": [
+        "windowsHelloForBusiness",
+        "fido2",
+        "x509CertificateMultiFactor",
+        "deviceBasedPush",
+        "temporaryAccessPassOneTime",
+        "temporaryAccessPassMultiUse",
+        "password,microsoftAuthenticatorPush",
+        "password,softwareOath",
+        "password,hardwareOath",
+        "password,sms",
+        "password,voice",
+        "federatedMultiFactor",
+        "microsoftAuthenticatorPush,federatedSingleFactor",
+        "softwareOath,federatedSingleFactor",
+        "hardwareOath,federatedSingleFactor",
+        "sms,federatedSingleFactor",
+        "voice,federatedSingleFactor"
+      ],
+      "combinationConfigurations": [],
+      "combinationConfigurations@odata.context": "https://graph.microsoft.com/beta/$metadata#identity/conditionalAccess/policies('6ea18b43-80c7-4611-bacc-3c015e4c8e3e')/grantControls/authenticationStrength/combinationConfigurations",
+      "modifiedDateTime": "2021-12-01T08:00:00Z",
+      "policyType": "builtIn",
+      "displayName": "Multifactor authentication",
+      "createdDateTime": "2021-12-01T08:00:00Z",
+      "id": "00000000-0000-0000-0000-000000000002"
+    },
+    "builtInControls": [],
+    "operator": "OR",
+    "termsOfUse": []
+  },
+  "sessionControls": {
+    "persistentBrowser": {
+      "mode": "never",
+      "isEnabled": true
+    },
+    "cloudAppSecurity": null,
+    "secureSignInSession": null,
+    "continuousAccessEvaluation": null,
+    "signInFrequency": null,
+    "disableResilienceDefaults": null,
+    "applicationEnforcedRestrictions": null
+  },
+  "deletedDateTime": null,
+  "modifiedDateTime": "2025-03-29T13:04:06.3984477Z",
+  "state": "enabledForReportingButNotEnforced",
+  "templateId": null,
+  "displayName": "210 - Grant - Require MFA for users",
+  "conditions": {
+    "users": {
+      "includeGroups": [],
+      "includeUsers": [
+        "All"
+      ],
+      "includeGuestsOrExternalUsers": null,
+      "excludeGroups": [],
+      "includeRoles": [],
+      "excludeGuestsOrExternalUsers": null,
+      "excludeUsers": [],
+      "excludeRoles": [
+        "9b895d92-2cd3-44c7-9d02-a6ac2d5ea5c3",
+        "c4e39bd9-1100-46d3-8c65-fb160da0071f",
+        "b0f54661-2d74-4c50-afa3-1ec803f12efe",
+        "158c047a-c907-4556-b7ef-446551a6b5f7",
+        "b1be1c3e-b65d-4f19-8427-f6fa0d97feb9",
+        "29232cdf-9323-42fd-ade2-1d097af3e4de",
+        "62e90394-69f5-4237-9190-012177145e10",
+        "f2ef992c-3afb-46b9-b7cf-a126ee74c451",
+        "729827e3-9c14-49f7-bb1b-9608f156bbb8",
+        "966707d0-3269-4727-9be2-8c3a10f19b9d",
+        "7be44c8a-adaf-4e2a-84d6-ab2649e08a13",
+        "e8611ab8-c189-46e8-94e1-60213ab1f814",
+        "194ae4cb-b126-40b2-bd5b-6091b380977d",
+        "f28a1f50-f6e7-4571-818b-6a12f2af6b6c",
+        "fe930be7-5e62-47db-91af-98c3a49a38b1",
+        "d29b2b05-8046-44ba-8758-1e26182fcf32",
+        "a92aed5d-d78a-4d16-b381-09adb37eb3b0"
+      ]
+    },
+    "clientAppTypes": [
+      "all"
+    ],
+    "clientApplications": null,
+    "applications": {
+      "applicationFilter": null,
+      "includeAuthenticationContextClassReferences": [],
+      "includeUserActions": [],
+      "includeApplications": [
+        "All"
+      ],
+      "excludeApplications": []
+    },
+    "times": null,
+    "userRiskLevels": [],
+    "devices": null,
+    "signInRiskLevels": [],
+    "locations": {
+      "excludeLocations": [],
+      "includeLocations": [
+        "All"
+      ]
+    },
+    "platforms": null,
+    "deviceStates": null
+  },
+  "partialEnablementStrategy": null,
+  "createdDateTime": "2025-03-08T08:11:13.5943725Z",
+  "id": "6ea18b43-80c7-4611-bacc-3c015e4c8e3e"
+}

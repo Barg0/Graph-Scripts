@@ -1,0 +1,64 @@
+{
+  "grantControls": {
+    "authenticationStrength@odata.context": "https://graph.microsoft.com/beta/$metadata#identity/conditionalAccess/policies('c2cfb460-0771-4d5b-973f-77ce7a76fdf8')/grantControls/authenticationStrength/$entity",
+    "customAuthenticationFactors": [],
+    "authenticationStrength": null,
+    "builtInControls": [
+      "mfa"
+    ],
+    "operator": "OR",
+    "termsOfUse": []
+  },
+  "sessionControls": {
+    "persistentBrowser": {
+      "mode": "never",
+      "isEnabled": true
+    },
+    "cloudAppSecurity": null,
+    "secureSignInSession": null,
+    "continuousAccessEvaluation": null,
+    "signInFrequency": null,
+    "disableResilienceDefaults": null,
+    "applicationEnforcedRestrictions": null
+  },
+  "deletedDateTime": null,
+  "modifiedDateTime": "2025-04-26T07:43:07.1876807Z",
+  "state": "enabledForReportingButNotEnforced",
+  "templateId": "c7503427-338e-4c5e-902d-abe252abfb43",
+  "displayName": "208 - Grant - Require MFA for eligible admins",
+  "conditions": {
+    "users": {
+      "includeGroups": [],
+      "includeUsers": [],
+      "includeGuestsOrExternalUsers": null,
+      "excludeGroups": [],
+      "includeRoles": [],
+      "excludeGuestsOrExternalUsers": null,
+      "excludeUsers": [],
+      "excludeRoles": []
+    },
+    "clientAppTypes": [
+      "all"
+    ],
+    "clientApplications": null,
+    "applications": {
+      "applicationFilter": null,
+      "includeAuthenticationContextClassReferences": [],
+      "includeUserActions": [],
+      "includeApplications": [
+        "All"
+      ],
+      "excludeApplications": []
+    },
+    "times": null,
+    "userRiskLevels": [],
+    "devices": null,
+    "signInRiskLevels": [],
+    "locations": null,
+    "platforms": null,
+    "deviceStates": null
+  },
+  "partialEnablementStrategy": null,
+  "createdDateTime": "2025-03-08T08:07:43.6750011Z",
+  "id": "c2cfb460-0771-4d5b-973f-77ce7a76fdf8"
+}

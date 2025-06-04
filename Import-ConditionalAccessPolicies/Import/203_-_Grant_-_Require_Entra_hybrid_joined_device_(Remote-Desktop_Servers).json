@@ -1,0 +1,87 @@
+{
+  "grantControls": {
+    "authenticationStrength@odata.context": "https://graph.microsoft.com/beta/$metadata#identity/conditionalAccess/policies('3eb17d7c-b9ea-45dc-acfe-6f4998b6b4fb')/grantControls/authenticationStrength/$entity",
+    "customAuthenticationFactors": [],
+    "authenticationStrength": null,
+    "builtInControls": [
+      "domainJoinedDevice"
+    ],
+    "operator": "OR",
+    "termsOfUse": []
+  },
+  "sessionControls": null,
+  "deletedDateTime": null,
+  "modifiedDateTime": "2025-03-29T14:47:02.3144121Z",
+  "state": "enabledForReportingButNotEnforced",
+  "templateId": null,
+  "displayName": "203 - Grant - Require Entra hybrid joined device (Remote-Desktop Servers)",
+  "conditions": {
+    "clientAppTypes": [
+      "all"
+    ],
+    "clientApplications": null,
+    "applications": {
+      "applicationFilter": null,
+      "includeAuthenticationContextClassReferences": [],
+      "includeUserActions": [],
+      "includeApplications": [
+        "All"
+      ],
+      "excludeApplications": []
+    },
+    "platforms": {
+      "excludePlatforms": [],
+      "includePlatforms": [
+        "windows"
+      ]
+    },
+    "userRiskLevels": [],
+    "users": {
+      "includeGroups": [],
+      "includeUsers": [
+        "All"
+      ],
+      "includeGuestsOrExternalUsers": null,
+      "excludeGroups": [],
+      "includeRoles": [],
+      "excludeGuestsOrExternalUsers": null,
+      "excludeUsers": [],
+      "excludeRoles": [
+        "9b895d92-2cd3-44c7-9d02-a6ac2d5ea5c3",
+        "c4e39bd9-1100-46d3-8c65-fb160da0071f",
+        "b0f54661-2d74-4c50-afa3-1ec803f12efe",
+        "158c047a-c907-4556-b7ef-446551a6b5f7",
+        "b1be1c3e-b65d-4f19-8427-f6fa0d97feb9",
+        "29232cdf-9323-42fd-ade2-1d097af3e4de",
+        "62e90394-69f5-4237-9190-012177145e10",
+        "f2ef992c-3afb-46b9-b7cf-a126ee74c451",
+        "729827e3-9c14-49f7-bb1b-9608f156bbb8",
+        "966707d0-3269-4727-9be2-8c3a10f19b9d",
+        "7be44c8a-adaf-4e2a-84d6-ab2649e08a13",
+        "e8611ab8-c189-46e8-94e1-60213ab1f814",
+        "194ae4cb-b126-40b2-bd5b-6091b380977d",
+        "f28a1f50-f6e7-4571-818b-6a12f2af6b6c",
+        "fe930be7-5e62-47db-91af-98c3a49a38b1",
+        "d29b2b05-8046-44ba-8758-1e26182fcf32",
+        "a92aed5d-d78a-4d16-b381-09adb37eb3b0"
+      ]
+    },
+    "signInRiskLevels": [],
+    "locations": null,
+    "times": null,
+    "devices": {
+      "includeDevices": [],
+      "excludeDeviceStates": [],
+      "includeDeviceStates": [],
+      "deviceFilter": {
+        "mode": "include",
+        "rule": "device.deviceId -eq \"ee084126-7076-45f3-97c6-cc65dd523c78\""
+      },
+      "excludeDevices": []
+    },
+    "deviceStates": null
+  },
+  "partialEnablementStrategy": null,
+  "createdDateTime": "2025-03-08T08:02:32.992748Z",
+  "id": "3eb17d7c-b9ea-45dc-acfe-6f4998b6b4fb"
+}

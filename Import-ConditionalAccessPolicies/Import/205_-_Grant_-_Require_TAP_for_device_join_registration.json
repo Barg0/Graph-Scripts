@@ -1,0 +1,66 @@
+{
+  "grantControls": {
+    "authenticationStrength@odata.context": "https://graph.microsoft.com/beta/$metadata#identity/conditionalAccess/policies('b9f41fb2-d429-41c1-84d5-a11de3ccd32b')/grantControls/authenticationStrength/$entity",
+    "customAuthenticationFactors": [],
+    "authenticationStrength": {
+      "requirementsSatisfied": "mfa",
+      "description": "Requires a one-time use Temporary Access Pass for secure and time-limited authentication scenarios.",
+      "allowedCombinations": [
+        "temporaryAccessPassOneTime"
+      ],
+      "combinationConfigurations": [],
+      "combinationConfigurations@odata.context": "https://graph.microsoft.com/beta/$metadata#identity/conditionalAccess/policies('b9f41fb2-d429-41c1-84d5-a11de3ccd32b')/grantControls/authenticationStrength/combinationConfigurations",
+      "modifiedDateTime": "2025-02-25T08:55:47.2301655Z",
+      "policyType": "custom",
+      "displayName": "Temporary Access Pass",
+      "createdDateTime": "2025-02-25T08:55:47.2301655Z",
+      "id": "c5aa4ce5-fc69-4a29-bfdd-b379bcb39895"
+    },
+    "builtInControls": [],
+    "operator": "OR",
+    "termsOfUse": []
+  },
+  "sessionControls": null,
+  "deletedDateTime": null,
+  "modifiedDateTime": "2025-03-08T08:11:56.4828239Z",
+  "state": "enabledForReportingButNotEnforced",
+  "templateId": null,
+  "displayName": "205 - Grant - Require TAP for device join/registration",
+  "conditions": {
+    "users": {
+      "includeGroups": [],
+      "includeUsers": [
+        "All"
+      ],
+      "includeGuestsOrExternalUsers": null,
+      "excludeGroups": [],
+      "includeRoles": [],
+      "excludeGuestsOrExternalUsers": null,
+      "excludeUsers": [],
+      "excludeRoles": []
+    },
+    "clientAppTypes": [
+      "all"
+    ],
+    "clientApplications": null,
+    "applications": {
+      "applicationFilter": null,
+      "includeAuthenticationContextClassReferences": [],
+      "includeUserActions": [
+        "urn:user:registerdevice"
+      ],
+      "includeApplications": [],
+      "excludeApplications": []
+    },
+    "times": null,
+    "userRiskLevels": [],
+    "devices": null,
+    "signInRiskLevels": [],
+    "locations": null,
+    "platforms": null,
+    "deviceStates": null
+  },
+  "partialEnablementStrategy": null,
+  "createdDateTime": "2025-02-25T08:56:50.9260414Z",
+  "id": "b9f41fb2-d429-41c1-84d5-a11de3ccd32b"
+}

@@ -1,0 +1,60 @@
+{
+  "grantControls": {
+    "authenticationStrength@odata.context": "https://graph.microsoft.com/beta/$metadata#identity/conditionalAccess/policies('50f77a52-fc44-400d-8283-e9518bb67270')/grantControls/authenticationStrength/$entity",
+    "customAuthenticationFactors": [],
+    "authenticationStrength": null,
+    "builtInControls": [
+      "block"
+    ],
+    "operator": "OR",
+    "termsOfUse": []
+  },
+  "sessionControls": null,
+  "deletedDateTime": null,
+  "modifiedDateTime": "2025-03-08T08:12:40.6080923Z",
+  "state": "enabledForReportingButNotEnforced",
+  "templateId": null,
+  "displayName": "103 - Block - Countries location",
+  "conditions": {
+    "users": {
+      "includeGroups": [],
+      "includeUsers": [
+        "All"
+      ],
+      "includeGuestsOrExternalUsers": null,
+      "excludeGroups": [],
+      "includeRoles": [],
+      "excludeGuestsOrExternalUsers": null,
+      "excludeUsers": [],
+      "excludeRoles": []
+    },
+    "clientAppTypes": [
+      "all"
+    ],
+    "clientApplications": null,
+    "applications": {
+      "applicationFilter": null,
+      "includeAuthenticationContextClassReferences": [],
+      "includeUserActions": [],
+      "includeApplications": [
+        "All"
+      ],
+      "excludeApplications": []
+    },
+    "times": null,
+    "userRiskLevels": [],
+    "devices": null,
+    "signInRiskLevels": [],
+    "locations": {
+      "excludeLocations": [],
+      "includeLocations": [
+        "All"
+      ]
+    },
+    "platforms": null,
+    "deviceStates": null
+  },
+  "partialEnablementStrategy": null,
+  "createdDateTime": "2025-03-08T07:43:57.9862993Z",
+  "id": "50f77a52-fc44-400d-8283-e9518bb67270"
+}
