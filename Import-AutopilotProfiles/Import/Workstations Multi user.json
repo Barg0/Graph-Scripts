@@ -1,0 +1,37 @@
+{
+  "locale": "os-default",
+  "enableWhiteGlove": false,
+  "description": "",
+  "outOfBoxExperienceSettings": {
+    "userType": "standard",
+    "hidePrivacySettings": true,
+    "hideEULA": true,
+    "skipKeyboardSelectionPage": true,
+    "deviceUsageType": "shared",
+    "hideEscapeLink": true
+  },
+  "extractHardwareHash": true,
+  "@odata.type": "#microsoft.graph.azureADWindowsAutopilotDeploymentProfile",
+  "lastModifiedDateTime": "2025-04-19T09:11:14.9994722Z",
+  "createdDateTime": "2025-04-19T09:11:14.9994722Z",
+  "displayName": "Workstations Multi user",
+  "id": "7b416eb6-ef6f-4a37-8e44-8c98d939852a",
+  "deviceNameTemplate": "WS-MU-%SERIAL%",
+  "hardwareHashExtractionEnabled": true,
+  "outOfBoxExperienceSetting": {
+    "privacySettingsHidden": true,
+    "escapeLinkHidden": true,
+    "userType": "standard",
+    "keyboardSelectionPageSkipped": true,
+    "eulaHidden": true,
+    "deviceUsageType": "shared"
+  },
+  "managementServiceAppId": null,
+  "enrollmentStatusScreenSettings": null,
+  "deviceType": "windowsPc",
+  "roleScopeTagIds": [
+    "0"
+  ],
+  "language": "os-default",
+  "preprovisioningAllowed": false
+}

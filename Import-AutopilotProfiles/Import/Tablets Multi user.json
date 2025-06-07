@@ -1,0 +1,37 @@
+{
+  "locale": "os-default",
+  "enableWhiteGlove": false,
+  "description": "",
+  "outOfBoxExperienceSettings": {
+    "userType": "standard",
+    "hidePrivacySettings": true,
+    "hideEULA": true,
+    "skipKeyboardSelectionPage": true,
+    "deviceUsageType": "shared",
+    "hideEscapeLink": true
+  },
+  "extractHardwareHash": true,
+  "@odata.type": "#microsoft.graph.azureADWindowsAutopilotDeploymentProfile",
+  "lastModifiedDateTime": "2025-04-19T09:10:04.7038041Z",
+  "createdDateTime": "2025-04-19T09:10:04.7038041Z",
+  "displayName": "Tablets Multi user",
+  "id": "1902dc9f-f6ba-43f7-b5fd-6a9f7d3eddd8",
+  "deviceNameTemplate": "TB-MU-%SERIAL%",
+  "hardwareHashExtractionEnabled": true,
+  "outOfBoxExperienceSetting": {
+    "privacySettingsHidden": true,
+    "escapeLinkHidden": true,
+    "userType": "standard",
+    "keyboardSelectionPageSkipped": true,
+    "eulaHidden": true,
+    "deviceUsageType": "shared"
+  },
+  "managementServiceAppId": null,
+  "enrollmentStatusScreenSettings": null,
+  "deviceType": "windowsPc",
+  "roleScopeTagIds": [
+    "0"
+  ],
+  "language": "os-default",
+  "preprovisioningAllowed": false
+}

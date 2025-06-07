@@ -1,0 +1,37 @@
+{
+  "locale": "os-default",
+  "enableWhiteGlove": false,
+  "description": "",
+  "outOfBoxExperienceSettings": {
+    "userType": "standard",
+    "hidePrivacySettings": true,
+    "hideEULA": true,
+    "skipKeyboardSelectionPage": true,
+    "deviceUsageType": "singleUser",
+    "hideEscapeLink": true
+  },
+  "extractHardwareHash": true,
+  "@odata.type": "#microsoft.graph.azureADWindowsAutopilotDeploymentProfile",
+  "lastModifiedDateTime": "2025-04-19T09:09:19.4107858Z",
+  "createdDateTime": "2025-04-19T06:39:23.949082Z",
+  "displayName": "Tablets",
+  "id": "44b47203-ef5c-488f-8f24-1538e1179d91",
+  "deviceNameTemplate": "TB-%SERIAL%",
+  "hardwareHashExtractionEnabled": true,
+  "outOfBoxExperienceSetting": {
+    "privacySettingsHidden": true,
+    "escapeLinkHidden": true,
+    "userType": "standard",
+    "keyboardSelectionPageSkipped": true,
+    "eulaHidden": true,
+    "deviceUsageType": "singleUser"
+  },
+  "managementServiceAppId": null,
+  "enrollmentStatusScreenSettings": null,
+  "deviceType": "windowsPc",
+  "roleScopeTagIds": [
+    "0"
+  ],
+  "language": "os-default",
+  "preprovisioningAllowed": false
+}

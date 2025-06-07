@@ -1,0 +1,37 @@
+{
+  "locale": "os-default",
+  "enableWhiteGlove": false,
+  "description": "",
+  "outOfBoxExperienceSettings": {
+    "userType": "standard",
+    "hidePrivacySettings": true,
+    "hideEULA": true,
+    "skipKeyboardSelectionPage": true,
+    "deviceUsageType": "shared",
+    "hideEscapeLink": true
+  },
+  "extractHardwareHash": true,
+  "@odata.type": "#microsoft.graph.azureADWindowsAutopilotDeploymentProfile",
+  "lastModifiedDateTime": "2025-04-19T09:09:04.2290203Z",
+  "createdDateTime": "2025-04-19T09:09:04.2290203Z",
+  "displayName": "Notebooks Multi user",
+  "id": "0ffbe615-fe94-472b-925b-10d56c21123e",
+  "deviceNameTemplate": "NB-MU-%SERIAL%",
+  "hardwareHashExtractionEnabled": true,
+  "outOfBoxExperienceSetting": {
+    "privacySettingsHidden": true,
+    "escapeLinkHidden": true,
+    "userType": "standard",
+    "keyboardSelectionPageSkipped": true,
+    "eulaHidden": true,
+    "deviceUsageType": "shared"
+  },
+  "managementServiceAppId": null,
+  "enrollmentStatusScreenSettings": null,
+  "deviceType": "windowsPc",
+  "roleScopeTagIds": [
+    "0"
+  ],
+  "language": "os-default",
+  "preprovisioningAllowed": false
+}
