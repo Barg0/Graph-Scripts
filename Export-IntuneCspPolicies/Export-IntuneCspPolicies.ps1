@@ -1,27 +1,31 @@
-# ====================[ Script Metadata ]====================
-# Script version:   2025-06-01 17:45
+# Script version:   2025-06-07 17:15
 # Script author:    Barg0
-
-# ---------------------------[ Script Start Timestamp ]---------------------------
 
 $scriptStartTime = Get-Date
 
-# ---------------------------[ Script name ]---------------------------
+# ---------------------------[ Parameters ]---------------------------
+
+$graphScopes = @(
+    "DeviceManagementConfiguration.Read.All"
+)
+$uri = "https://graph.microsoft.com/beta/deviceManagement/deviceConfigurations"
 
 $scriptName = "Export-IntuneCspPolicies"
 $logFileName = "$($scriptName).log"
 
-$exportPath = Join-Path -Path $PSScriptRoot -ChildPath "Export"
+# Output folder for JSON
+$exportDir = Join-Path -Path $PSScriptRoot -ChildPath "ExportCspPolicies"
 
-# ---------------------------[ Logging Setup ]---------------------------
+# ---------------------------[ Logging Control ]---------------------------
 
-# Logging control switches
 $log = $true                     # Set to $false to disable logging in shell
 $enableLogFile = $false          # Set to $false to disable file output
 
 # Define the log output location
-$logFileDirectory = $PSScriptRoot
-$logFile = "$logFileDirectory\$logFileName"
+$logFileDirectory = "$PSScriptRoot"
+$logFile = Join-Path -Path $logFileDirectory -ChildPath $logFileName
+
+# ---------------------------[ Logging Setup ]---------------------------
 
 # Ensure the log directory exists
 if ($enableLogFile -and -not (Test-Path $logFileDirectory)) {
@@ -89,9 +93,8 @@ function Complete-Script {
 Write-Log "======== Script Started ========" -Tag "Start"
 Write-Log "ComputerName: $env:COMPUTERNAME | User: $env:USERNAME | Script: $scriptName" -Tag "Info"
 
-# ---------------------------[ Graph Connection ]---------------------------
+# ---------------------------[ Graph SDK Setup ]---------------------------
 
-# Ensure the Microsoft.Graph SDK is installed
 if (-not (Get-Module -ListAvailable -Name Microsoft.Graph)) {
     Write-Log "Microsoft.Graph module not found. Installing..." -Tag "Info"
     try {
@@ -105,20 +108,22 @@ if (-not (Get-Module -ListAvailable -Name Microsoft.Graph)) {
     Write-Log "Microsoft.Graph module found." -Tag "Info"
 }
 
-# Import the module
-try {
-    Import-Module Microsoft.Graph -Force -ErrorAction Stop
-    Write-Log "Microsoft.Graph module imported." -Tag "Success"
-} catch {
-    Write-Log "Failed to import Microsoft.Graph module: $_" -Tag "Error"
-    Complete-Script -ExitCode 1
+if (-not (Get-Module Microsoft.Graph)) {
+    try {
+        Import-Module Microsoft.Graph -Force -ErrorAction Stop
+        Write-Log "Microsoft.Graph module imported." -Tag "Success"
+    } catch {
+        Write-Log "Failed to import Microsoft.Graph module: $_" -Tag "Error"
+        Complete-Script -ExitCode 1
+    }
 }
 
-# Validate Graph connection and scope
+# ---------------------------[ Graph Authentication ]---------------------------
+
 $connected = $false
 try {
     $context = Get-MgContext
-    if ($null -ne $context.Account -and $null -ne $context.Scopes -and $context.Scopes -contains "DeviceManagementConfiguration.Read.All") {
+    if ($null -ne $context.Account -and $null -ne $context.Scopes -and $context.Scopes -contains $graphScopes) {
         Write-Log "Microsoft Graph already connected as $($context.Account)" -Tag "Success"
         $connected = $true
     } else {
@@ -128,10 +133,9 @@ try {
     Write-Log "Microsoft Graph not connected. Attempting connection..." -Tag "Info"
 }
 
-# Connect if not already valid
 if (-not $connected) {
     try {
-        Connect-MgGraph -Scopes "DeviceManagementConfiguration.Read.All" | Out-Null
+        Connect-MgGraph -Scopes $graphScopes | Out-Null
         Write-Log "Connected to Microsoft Graph successfully." -Tag "Success"
     } catch {
         Write-Log "Failed to connect to Microsoft Graph: $_" -Tag "Error"
@@ -141,48 +145,47 @@ if (-not $connected) {
 
 # ---------------------------[ Create Export Folder ]---------------------------
 
-try {
-    New-Item -ItemType Directory -Force -Path $exportPath | Out-Null
-    Write-Log "Created export folder at $exportPath" -Tag "Info"
-} catch {
-    Write-Log "Failed to create export directory: $_" -Tag "Error"
-    Complete-Script -ExitCode 2
-}
-
-# ---------------------------[ Get Custom Profiles ]---------------------------
-try {
-    $allConfigs = Get-MgDeviceManagementDeviceConfiguration
-    $customConfigs = $allConfigs | Where-Object {
-        $_.AdditionalProperties.'@odata.type' -eq '#microsoft.graph.windows10CustomConfiguration'
-    }
-
-    if ($customConfigs.Count -eq 0) {
-        Write-Log "No custom OMA-URI configuration profiles found." -Tag "Error"
-        Complete-Script -ExitCode 3
-    } else {
-        Write-Log "$($customConfigs.Count) custom configuration profiles found." -Tag "Info"
-    }
-} catch {
-    Write-Log "Error retrieving device configurations: $_" -Tag "Error"
-    Complete-Script -ExitCode 4
-}
-
-# ---------------------------[ Export Profiles to JSON ]---------------------------
-
-foreach ($config in $customConfigs) {
+if (-not (Test-Path -Path $exportDir)) {
     try {
-        Write-Log "Processing profile: $($config.DisplayName)" -Tag "Info"
-        $fullConfig = Get-MgDeviceManagementDeviceConfiguration -DeviceConfigurationId $config.Id
+        New-Item -ItemType Directory -Force -Path $exportDir | Out-Null
+        Write-Log "Created export folder at $exportDir" -Tag "Info"
+    } catch {
+        Write-Log "Failed to create export directory at $($exportDir): $_" -Tag "Error"
+        Complete-Script -ExitCode 1
+    }
+}
 
+# ---------------------------[ Graph API Request ]---------------------------
+
+Write-Log "Graph URI: $uri" -Tag "Info"
+
+try {
+    $response = Invoke-MgGraphRequest -Method GET -Uri $uri -ErrorAction Stop
+    $configs = $response.value | Where-Object { $_.'@odata.type' -eq '#microsoft.graph.windows10CustomConfiguration' }
+    Write-Log "Found $($configs.Count) OMA-URI custom profiles." -Tag "Info"
+} catch {
+    Write-Log "Graph API request failed: $_" -Tag "Error"
+    Complete-Script -ExitCode 1
+}
+
+# ---------------------------[ Export Each Profile ]---------------------------
+
+foreach ($config in $configs) {
+    $configId = $config.id
+    $configName = $config.displayName -replace '[\\\/:*?"<>|]', '_'
+    $filePath = Join-Path $exportDir "$configName.json"
+    $configUri = "$uri/$configId"
+
+    try {
+        $full = Invoke-MgGraphRequest -Method GET -Uri $configUri -ErrorAction Stop
         $exportObject = [PSCustomObject]@{
-            displayName = $fullConfig.DisplayName
-            description = $fullConfig.Description
+            displayName = $full.displayName
+            description = $full.description
             omaSettings = @()
         }
 
-        if ($fullConfig.AdditionalProperties.ContainsKey("omaSettings")) {
-            $omaList = $fullConfig.AdditionalProperties["omaSettings"]
-            foreach ($setting in $omaList) {
+        if ($full.omaSettings) {
+            foreach ($setting in $full.omaSettings) {
                 $exportObject.omaSettings += [PSCustomObject]@{
                     displayName = $setting.displayName
                     description = $setting.description
@@ -192,17 +195,13 @@ foreach ($config in $customConfigs) {
                 }
             }
 
-            $fileName = ($fullConfig.DisplayName -replace '[\\\/:*?"<>|]', '_') + ".json"
-            $filePath = Join-Path $exportPath $fileName
-
-            $exportObject | ConvertTo-Json -Depth 10 | Out-File -Encoding UTF8 $filePath
-            Write-Log "Exported profile to $filePath" -Tag "Success"
+            $exportObject | ConvertTo-Json -Depth 10 | Out-File -Encoding UTF8 -FilePath $filePath
+            Write-Log "Exported '$($config.displayName)'" -Tag "Success"
         } else {
-            Write-Log "Profile '$($config.DisplayName)' has no omaSettings. Skipping export." -Tag "Info"
+            Write-Log "No omaSettings found for '$($config.displayName)'" -Tag "Info"
         }
-
     } catch {
-        Write-Log "Failed to export profile '$($config.DisplayName)': $_" -Tag "Error"
+        Write-Log "Failed to export profile '$($config.displayName)': $_" -Tag "Error"
     }
 }
 
