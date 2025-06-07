@@ -1,0 +1,33 @@
+Policy,Include,Exclude
+Antivirus - Baseline,All Devices,
+Application - Default apps,All Users,
+Application - Google Chrome,All Users,
+Application - Microsoft Edge,All Users,
+Application - Microsoft OneDrive,All Devices,
+Application - Microsoft Outlook,All Users,
+Application - Microsoft Store,All Users,
+Application - Windows Package Manager,All Devices,
+Attack surface reduction - Baseline,All Devices,
+Autopilot - Account setup,All Devices,
+BitLocker - Multi-user,All Devices,
+BitLocker - Notebooks,Windows - Notebooks,Windows - Multi-user
+BitLocker - Tablets,Windows - Tablets,Windows - Multi-user
+BitLocker - Workstations,Windows - Workstations,Windows - Multi-user
+Firewall - Baseline,All Devices,
+LAPS - admin.laps,All Devices,
+Local Group - Administrators,All Devices,
+Login - First Logon Animation,All Devices,
+Login - Self-service password reset,All Devices,
+Multi-user - Config,Windows - Multi-user,
+Multi-user - Security Key Login,Windows - Multi-user,
+Network Profile - Domain,,
+Personalization - Start menu - Windows 11,All Devices,
+Power - Hibernation,All Devices,
+Print Server - Restrictions,,
+Privacy - App Permissions,All Devices,
+Privacy - Config,All Devices,
+Privacy - Search,All Devices,
+Privacy - Tracking,All Users,
+Remote-Desktop - Credential Guard,,
+Windows Hello - Entra hybrid joined,Windows - Entra hybrid joined,Windows - Multi-user
+Windows Hello - Entra joined,Windows - Entra joined,Windows - Multi-user
