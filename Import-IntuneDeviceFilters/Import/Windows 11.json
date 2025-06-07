@@ -1,0 +1,14 @@
+{
+  "roleScopeTags": [
+    "0"
+  ],
+  "payloads": [],
+  "assignmentFilterManagementType": "devices",
+  "id": "53c6e5d9-3e74-4c9b-ab70-1b83938bd2ad",
+  "platform": "windows10AndLater",
+  "description": "",
+  "lastModifiedDateTime": "2025-06-07T09:08:35.3993988Z",
+  "displayName": "Windows 11",
+  "createdDateTime": "2025-06-07T09:08:35.3993988Z",
+  "rule": "(device.osVersion -startsWith \"10.0.2\")"
+}

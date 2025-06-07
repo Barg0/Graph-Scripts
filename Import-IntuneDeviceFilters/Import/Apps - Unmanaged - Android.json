@@ -1,0 +1,14 @@
+{
+  "roleScopeTags": [
+    "0"
+  ],
+  "payloads": [],
+  "assignmentFilterManagementType": "apps",
+  "id": "8a0680cc-7b5c-4fc1-941c-1f3f352e0a5b",
+  "platform": "androidMobileApplicationManagement",
+  "description": "",
+  "lastModifiedDateTime": "2025-06-07T09:27:47.4847877Z",
+  "displayName": "Apps - Unmanaged - Android",
+  "createdDateTime": "2025-06-07T09:27:47.4847877Z",
+  "rule": "(app.deviceManagementType -eq \"Unmanaged\")"
+}

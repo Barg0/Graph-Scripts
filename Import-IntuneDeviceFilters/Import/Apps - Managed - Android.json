@@ -1,0 +1,14 @@
+{
+  "roleScopeTags": [
+    "0"
+  ],
+  "payloads": [],
+  "assignmentFilterManagementType": "apps",
+  "id": "2b2cb170-740c-4ee6-8627-e2560d8cdf4a",
+  "platform": "androidMobileApplicationManagement",
+  "description": "",
+  "lastModifiedDateTime": "2025-06-07T09:42:19.632539Z",
+  "displayName": "Apps - Managed - Android",
+  "createdDateTime": "2025-06-07T09:42:19.632539Z",
+  "rule": "(app.deviceManagementType -eq \"Android Enterprise\")"
+}

@@ -1,0 +1,14 @@
+{
+  "roleScopeTags": [
+    "0"
+  ],
+  "payloads": [],
+  "assignmentFilterManagementType": "devices",
+  "id": "dd4e3c7f-5bec-40b0-8b35-b76aba2e1d57",
+  "platform": "macOS",
+  "description": "",
+  "lastModifiedDateTime": "2025-06-07T09:52:18.7122716Z",
+  "displayName": "macOS Ventura",
+  "createdDateTime": "2025-06-07T09:52:18.7122716Z",
+  "rule": "(device.osVersion -startsWith \"13.\")"
+}

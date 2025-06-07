@@ -1,0 +1,14 @@
+{
+  "roleScopeTags": [
+    "0"
+  ],
+  "payloads": [],
+  "assignmentFilterManagementType": "devices",
+  "id": "5ee5c5d7-6ab0-401b-bcdb-0370ff54e4f1",
+  "platform": "windows10AndLater",
+  "description": "",
+  "lastModifiedDateTime": "2025-06-07T09:07:18.5790163Z",
+  "displayName": "Windows - Notebooks",
+  "createdDateTime": "2025-06-07T09:07:18.5790163Z",
+  "rule": "(device.deviceName -startsWith \"NB-\")"
+}

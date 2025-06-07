@@ -1,0 +1,14 @@
+{
+  "roleScopeTags": [
+    "0"
+  ],
+  "payloads": [],
+  "assignmentFilterManagementType": "devices",
+  "id": "dbb51e68-35a4-493b-9891-c467fbee0b13",
+  "platform": "windows10AndLater",
+  "description": "",
+  "lastModifiedDateTime": "2025-06-07T09:09:34.0372164Z",
+  "displayName": "Windows - Multi-user",
+  "createdDateTime": "2025-06-07T09:09:34.0372164Z",
+  "rule": "(device.deviceName -startsWith \"WS-MU-\") or (device.deviceName -startsWith \"NB-MU-\") or (device.deviceName -startsWith \"TB-MU-\")"
+}

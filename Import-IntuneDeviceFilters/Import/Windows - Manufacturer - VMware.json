@@ -1,0 +1,14 @@
+{
+  "roleScopeTags": [
+    "0"
+  ],
+  "payloads": [],
+  "assignmentFilterManagementType": "devices",
+  "id": "ee6340f0-6702-49f4-924b-f5a933642f99",
+  "platform": "windows10AndLater",
+  "description": "",
+  "lastModifiedDateTime": "2025-06-07T09:13:46.9910542Z",
+  "displayName": "Windows - Manufacturer - VMware",
+  "createdDateTime": "2025-06-07T09:13:46.9910542Z",
+  "rule": "(device.manufacturer -eq \"VMware, Inc.\")"
+}

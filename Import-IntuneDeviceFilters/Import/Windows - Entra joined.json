@@ -1,0 +1,14 @@
+{
+  "roleScopeTags": [
+    "0"
+  ],
+  "payloads": [],
+  "assignmentFilterManagementType": "devices",
+  "id": "6929f0d5-3b96-41a5-b62b-2a92fe6cda45",
+  "platform": "windows10AndLater",
+  "description": "",
+  "lastModifiedDateTime": "2025-06-07T09:10:49.4117048Z",
+  "displayName": "Windows - Entra joined",
+  "createdDateTime": "2025-06-07T09:10:49.4117048Z",
+  "rule": "(device.deviceTrustType -eq \"Azure AD joined\")"
+}

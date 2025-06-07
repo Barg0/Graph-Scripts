@@ -1,0 +1,14 @@
+{
+  "roleScopeTags": [
+    "0"
+  ],
+  "payloads": [],
+  "assignmentFilterManagementType": "devices",
+  "id": "4740c40c-0c6d-4628-ab6e-f52d4bc6d58a",
+  "platform": "macOS",
+  "description": "",
+  "lastModifiedDateTime": "2025-06-07T09:50:50.621371Z",
+  "displayName": "macOS Sequoia",
+  "createdDateTime": "2025-06-07T09:50:50.621371Z",
+  "rule": "(device.osVersion -startsWith \"15.\")"
+}

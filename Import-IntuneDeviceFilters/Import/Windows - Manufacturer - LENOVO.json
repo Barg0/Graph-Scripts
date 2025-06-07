@@ -1,0 +1,14 @@
+{
+  "roleScopeTags": [
+    "0"
+  ],
+  "payloads": [],
+  "assignmentFilterManagementType": "devices",
+  "id": "bb544467-ac5f-4e5e-b103-3acfdc59bb06",
+  "platform": "windows10AndLater",
+  "description": "",
+  "lastModifiedDateTime": "2025-06-07T09:10:21.099117Z",
+  "displayName": "Windows - Manufacturer - LENOVO",
+  "createdDateTime": "2025-06-07T09:10:21.099117Z",
+  "rule": "(device.manufacturer -eq \"LENOVO\")"
+}

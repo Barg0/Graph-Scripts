@@ -1,0 +1,14 @@
+{
+  "roleScopeTags": [
+    "0"
+  ],
+  "payloads": [],
+  "assignmentFilterManagementType": "apps",
+  "id": "588c0ff5-c463-4aa1-8849-b8790aa17a93",
+  "platform": "iOSMobileApplicationManagement",
+  "description": "",
+  "lastModifiedDateTime": "2025-06-07T09:28:03.384586Z",
+  "displayName": "Apps - Unmanaged - iOS",
+  "createdDateTime": "2025-06-07T09:28:03.384586Z",
+  "rule": "(app.deviceManagementType -eq \"Unmanaged\")"
+}

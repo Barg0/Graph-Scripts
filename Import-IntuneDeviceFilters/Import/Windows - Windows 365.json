@@ -1,0 +1,14 @@
+{
+  "roleScopeTags": [
+    "0"
+  ],
+  "payloads": [],
+  "assignmentFilterManagementType": "devices",
+  "id": "8f1b8da5-06c6-4830-9559-ce3a2019f560",
+  "platform": "windows10AndLater",
+  "description": "",
+  "lastModifiedDateTime": "2025-06-07T09:16:20.0823694Z",
+  "displayName": "Windows - Windows 365",
+  "createdDateTime": "2025-06-07T09:16:20.0823694Z",
+  "rule": "(device.deviceName -startsWith \"W365-\")"
+}

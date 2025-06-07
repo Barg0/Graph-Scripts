@@ -1,0 +1,14 @@
+{
+  "roleScopeTags": [
+    "0"
+  ],
+  "payloads": [],
+  "assignmentFilterManagementType": "devices",
+  "id": "29542df8-939f-49d0-b4a1-4e0fc47c3856",
+  "platform": "androidForWork",
+  "description": "",
+  "lastModifiedDateTime": "2025-06-07T09:49:16.1301733Z",
+  "displayName": "Android - Manufacturer - Xiaomi",
+  "createdDateTime": "2025-06-07T09:49:16.1301733Z",
+  "rule": "(device.manufacturer -eq \"Xiaomi\")"
+}

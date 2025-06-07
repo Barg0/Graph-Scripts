@@ -1,0 +1,14 @@
+{
+  "roleScopeTags": [
+    "0"
+  ],
+  "payloads": [],
+  "assignmentFilterManagementType": "devices",
+  "id": "62217d90-b383-4f41-947c-768fe4e9f886",
+  "platform": "windows10AndLater",
+  "description": "",
+  "lastModifiedDateTime": "2025-06-07T09:08:26.7533974Z",
+  "displayName": "Windows - Tablets",
+  "createdDateTime": "2025-06-07T09:08:26.7533974Z",
+  "rule": "(device.deviceName -startsWith \"TB-\")"
+}

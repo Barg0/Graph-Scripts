@@ -1,0 +1,14 @@
+{
+  "roleScopeTags": [
+    "0"
+  ],
+  "payloads": [],
+  "assignmentFilterManagementType": "devices",
+  "id": "8be5ae28-6bbf-483b-a896-2c908836d65e",
+  "platform": "windows10AndLater",
+  "description": "",
+  "lastModifiedDateTime": "2025-06-07T09:17:25.6022135Z",
+  "displayName": "Windows - Azure Virtual Desktop",
+  "createdDateTime": "2025-06-07T09:17:25.6022135Z",
+  "rule": "(device.deviceName -startsWith \"AVD-\")"
+}

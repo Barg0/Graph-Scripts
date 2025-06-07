@@ -1,0 +1,14 @@
+{
+  "roleScopeTags": [
+    "0"
+  ],
+  "payloads": [],
+  "assignmentFilterManagementType": "devices",
+  "id": "0d408cf7-8819-44ec-aab4-ba8975cc6f71",
+  "platform": "macOS",
+  "description": "",
+  "lastModifiedDateTime": "2025-06-07T09:51:36.7651845Z",
+  "displayName": "macOS Sonoma",
+  "createdDateTime": "2025-06-07T09:51:36.7651845Z",
+  "rule": "(device.osVersion -startsWith \"14.\")"
+}

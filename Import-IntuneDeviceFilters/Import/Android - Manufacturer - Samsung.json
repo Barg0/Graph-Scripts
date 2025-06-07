@@ -1,0 +1,14 @@
+{
+  "roleScopeTags": [
+    "0"
+  ],
+  "payloads": [],
+  "assignmentFilterManagementType": "devices",
+  "id": "0f0a3115-aa4f-4f61-b5d8-17ee233a43ea",
+  "platform": "androidForWork",
+  "description": "",
+  "lastModifiedDateTime": "2025-06-07T09:48:39.5352302Z",
+  "displayName": "Android - Manufacturer - Samsung",
+  "createdDateTime": "2025-06-07T09:48:39.5352302Z",
+  "rule": "(device.manufacturer -eq \"samsung\")"
+}

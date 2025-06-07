@@ -1,0 +1,14 @@
+{
+  "roleScopeTags": [
+    "0"
+  ],
+  "payloads": [],
+  "assignmentFilterManagementType": "devices",
+  "id": "83aaeeec-f712-41ed-86f1-b7d3fc55a080",
+  "platform": "androidForWork",
+  "description": "",
+  "lastModifiedDateTime": "2025-06-07T09:47:37.4673233Z",
+  "displayName": "Android - Manufacturer - Google",
+  "createdDateTime": "2025-06-07T09:47:37.4673233Z",
+  "rule": "(device.manufacturer -eq \"Google\")"
+}

@@ -1,0 +1,14 @@
+{
+  "roleScopeTags": [
+    "0"
+  ],
+  "payloads": [],
+  "assignmentFilterManagementType": "devices",
+  "id": "799a3b38-a9c3-4100-ad42-94540dc359d2",
+  "platform": "windows10AndLater",
+  "description": "",
+  "lastModifiedDateTime": "2025-06-07T09:11:43.4240376Z",
+  "displayName": "Windows - Manufacturer - HP",
+  "createdDateTime": "2025-06-07T09:11:43.4240376Z",
+  "rule": "(device.manufacturer -eq \"HP\")"
+}

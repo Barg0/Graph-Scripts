@@ -1,0 +1,14 @@
+{
+  "roleScopeTags": [
+    "0"
+  ],
+  "payloads": [],
+  "assignmentFilterManagementType": "devices",
+  "id": "ff83cfc6-04ea-4530-bd1f-fa0667dce821",
+  "platform": "windows10AndLater",
+  "description": "",
+  "lastModifiedDateTime": "2025-06-07T09:12:39.4720109Z",
+  "displayName": "Windows - Manufacturer - Microsoft Corporation",
+  "createdDateTime": "2025-06-07T09:12:39.4720109Z",
+  "rule": "(device.manufacturer -eq \"Microsoft Corporation\")"
+}
