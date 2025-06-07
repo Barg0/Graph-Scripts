@@ -1,4 +1,4 @@
-# Script version:   2025-05-29 11:10
+# Script version:   2025-06-07 13:45
 # Script author:    Barg0
 
 # ---------------------------[ Script Start Timestamp ]---------------------------
@@ -7,45 +7,42 @@ $scriptStartTime = Get-Date
 
 # ---------------------------[ Parameters ]---------------------------
 
-$importPath = Join-Path -Path $PSScriptRoot -ChildPath "Import"
-
-# ---------------------------[ Script name ]---------------------------
-
+$graphScopes = @(
+    "DeviceManagementConfiguration.ReadWrite.All"
+)
+$uri = "https://graph.microsoft.com/beta/deviceManagement/configurationPolicies"
 $scriptName = "Import-IntuneSettingsCatalog"
-$logFileName = "$($scriptName).log" 
+$logFileName = "$scriptName.log"
+
+# Import folder for JSON
+$importDir = Join-Path -Path $PSScriptRoot -ChildPath "Import"
+
+# ---------------------------[ Logging Control ]---------------------------
+
+$log = $true                     # Set to $false to disable logging in shell
+$enableLogFile = $false          # Set to $false to disable file output
+$logFileDirectory = "$PSScriptRoot"
+$logFile = Join-Path -Path $logFileDirectory -ChildPath $logFileName
 
 # ---------------------------[ Logging Setup ]---------------------------
 
-# Logging control switches
-$log = $true                     # Set to $false to disable logging in shell
-$enableLogFile = $false          # Set to $false to disable file output
-
-# Define the log output location
-$logFileDirectory = $PSScriptRoot
-$logFile = "$logFileDirectory\$logFileName"
-
-# Ensure the log directory exists
 if ($enableLogFile -and -not (Test-Path $logFileDirectory)) {
     New-Item -ItemType Directory -Path $logFileDirectory -Force | Out-Null
 }
 
-# Function to write structured logs to file and console
 function Write-Log {
     param ([string]$Message, [string]$Tag = "Info")
-
-    if (-not $log) { return } # Exit if logging is disabled
+    if (-not $log) { return }
 
     $timestamp = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
     $tagList = @("Start", "Check", "Info", "Success", "Error", "Debug", "End")
     $rawTag = $Tag.Trim()
-
     if ($tagList -contains $rawTag) {
         $rawTag = $rawTag.PadRight(7)
     } else {
-        $rawTag = "Error  "  # Fallback if an unrecognized tag is used
+        $rawTag = "Error  "
     }
 
-    # Set tag colors
     $color = switch ($rawTag.Trim()) {
         "Start"   { "Cyan" }
         "Check"   { "Blue" }
@@ -58,21 +55,16 @@ function Write-Log {
     }
 
     $logMessage = "$timestamp [  $rawTag ] $Message"
-
-    # Write to file if enabled
     if ($enableLogFile) {
         "$logMessage" | Out-File -FilePath $logFile -Append
     }
 
-    # Write to console with color formatting
     Write-Host "$timestamp " -NoNewline
     Write-Host "[  " -NoNewline -ForegroundColor White
     Write-Host "$rawTag" -NoNewline -ForegroundColor $color
     Write-Host " ] " -NoNewline -ForegroundColor White
     Write-Host "$Message"
 }
-
-# ---------------------------[ Exit Function ]---------------------------
 
 function Complete-Script {
     param([int]$ExitCode)
@@ -83,7 +75,6 @@ function Complete-Script {
     Write-Log "======== Script Completed ========" -Tag "End"
     exit $ExitCode
 }
-# Complete-Script -ExitCode 0
 
 # ---------------------------[ Script Start ]---------------------------
 
@@ -91,7 +82,6 @@ Write-Log "======== Script Started ========" -Tag "Start"
 Write-Log "ComputerName: $env:COMPUTERNAME | User: $env:USERNAME | Script: $scriptName" -Tag "Info"
 
 # ---------------------------[ Graph SDK Setup ]---------------------------
-
 
 if (-not (Get-Module -ListAvailable -Name Microsoft.Graph)) {
     Write-Log "Microsoft.Graph module not found. Installing..." -Tag "Info"
@@ -123,7 +113,7 @@ if (-not (Get-Module Microsoft.Graph)) {
 $connected = $false
 try {
     $context = Get-MgContext
-    if ($null -ne $context.Account -and $null -ne $context.Scopes -and $context.Scopes -contains "DeviceManagementConfiguration.ReadWrite.All") {
+    if ($null -ne $context.Account -and $null -ne $context.Scopes -and ($graphScopes | ForEach-Object { $_ -in $context.Scopes })) {
         Write-Log "Microsoft Graph already connected as $($context.Account)" -Tag "Success"
         $connected = $true
     } else {
@@ -135,7 +125,7 @@ try {
 
 if (-not $connected) {
     try {
-        Connect-MgGraph -Scopes "DeviceManagementConfiguration.ReadWrite.All" | Out-Null
+        Connect-MgGraph -Scopes $graphScopes | Out-Null
         Write-Log "Connected to Microsoft Graph successfully." -Tag "Success"
     } catch {
         Write-Log "Failed to connect to Microsoft Graph: $_" -Tag "Error"
@@ -143,46 +133,84 @@ if (-not $connected) {
     }
 }
 
-# ---------------------------[ Import ]---------------------------
+# ---------------------------[ Import Function ]---------------------------
 
 function Import-IntuneProfile {
     param (
-        [string]$FilePath
+        [string]$FilePath,
+        [string]$GraphUri,
+        [hashtable]$ExistingProfiles
     )
 
-    Write-Log "Processing file: $FilePath" -Tag "Info"
+    # Write-Log "Processing file: $FilePath" -Tag "Debug"
 
     try {
-        $raw = Get-Content -Path $FilePath -Raw | ConvertFrom-Json
+        $rawContent = Get-Content -Path $FilePath -Raw
+        $profileData = $rawContent | ConvertFrom-Json -ErrorAction Stop
 
-        $profile = [ordered]@{
-            name = $raw.name
-            description = $raw.description
-            platforms = $raw.platforms
-            technologies = $raw.technologies
-            roleScopeTagIds = $raw.roleScopeTagIds
-            settings = $raw.settings
+        if (-not $profileData.name) {
+            Write-Log "Profile in '$FilePath' is missing a 'name' property. Skipping." -Tag "Error"
+            return
         }
 
-        $body = $profile | ConvertTo-Json -Depth 20 -Compress
+        $profileName = $profileData.name
 
-        $response = Invoke-MgGraphRequest -Method POST -Uri "https://graph.microsoft.com/beta/deviceManagement/configurationPolicies" -Body $body -ContentType 'application/json'
+        if ($ExistingProfiles.ContainsKey($profileName)) {
+            Write-Log "Profile '$profileName' already exists. Skipping import." -Tag "Info"
+            return
+        }
+
+        $body = @{
+            name             = $profileData.name
+            description      = $profileData.description
+            platforms        = $profileData.platforms
+            technologies     = $profileData.technologies
+            roleScopeTagIds  = $profileData.roleScopeTagIds
+            settings         = $profileData.settings
+        } | ConvertTo-Json -Depth 20 -Compress
+
+        $response = Invoke-MgGraphRequest -Method POST -Uri $GraphUri -Body $body -ContentType 'application/json'
 
         if ($null -ne $response.id) {
             Write-Log "Imported profile '$($response.name)' successfully with ID $($response.id)" -Tag "Success"
         } else {
-            Write-Log "No ID returned. Import may have failed." -Tag "Warn"
+            Write-Log "No ID returned for '$profileName'. Import may have failed." -Tag "Info"
         }
-    }
-    catch {
-        Write-Log "Failed to import '$FilePath': $_" -Tag "Error"
+    } catch {
+        Write-Log "Exception while importing '$FilePath': $($_.Exception.Message)" -Tag "Error"
     }
 }
 
-Get-ChildItem -Path $importPath -Filter *.json | ForEach-Object {
-    Import-IntuneProfile -FilePath $_.FullName
+# ---------------------------[ Import Profiles ]---------------------------
+
+if (-not (Test-Path -Path $importDir)) {
+    Write-Log "Import directory not found: $importDir" -Tag "Error"
+    Complete-Script -ExitCode 1
 }
 
-Write-Log "All profiles processed." -Tag "End"
-# Disconnect-MgGraph
+Write-Log "Retrieving existing Intune configuration profiles..." -Tag "Info"
+
+$existingProfiles = @{}
+$nextLink = $uri
+
+try {
+    do {
+        $response = Invoke-MgGraphRequest -Method GET -Uri $nextLink
+        foreach ($profile in $response.value) {
+            $normalizedName = ($profile.name -replace '\s+', ' ').Trim()
+            $existingProfiles[$normalizedName] = $profile.id
+        }
+        $nextLink = $response.'@odata.nextLink'
+    } while ($null -ne $nextLink)
+
+    Write-Log "Loaded $($existingProfiles.Count) existing profiles." -Tag "Info"
+} catch {
+    Write-Log "Failed to retrieve existing profiles: $($_.Exception.Message)" -Tag "Error"
+    Complete-Script -ExitCode 1
+}
+
+Get-ChildItem -Path $importDir -Filter *.json | ForEach-Object {
+    Import-IntuneProfile -FilePath $_.FullName -GraphUri $uri -ExistingProfiles $existingProfiles
+}
+
 Complete-Script -ExitCode 0
