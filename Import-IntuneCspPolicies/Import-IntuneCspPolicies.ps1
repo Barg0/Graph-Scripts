@@ -1,30 +1,32 @@
-# ========================================================================================
-# Script version:   2025-06-01 18:30
+# Script version:   2025-06-07 17:15
 # Script author:    Barg0
-# ========================================================================================
-
-# ---------------------------[ Script Start Timestamp ]---------------------------
 
 $scriptStartTime = Get-Date
 
 # ---------------------------[ Parameters ]---------------------------
 
-$importPath = Join-Path -Path $PSScriptRoot -ChildPath "Policies"
-
-# ---------------------------[ Script name ]---------------------------
+$graphScopes = @(
+    "DeviceManagementConfiguration.Read.All",
+    "Directory.Read.All"
+)
+$uri = "https://graph.microsoft.com/beta/deviceManagement/deviceConfigurations"
 
 $scriptName = "Import-IntuneCspPolicies"
-$logFileName = "$($scriptName).log" 
+$logFileName = "$($scriptName).log"
 
-# ---------------------------[ Logging Setup ]---------------------------
+# Import folder for JSON
+$importDir = Join-Path -Path $PSScriptRoot -ChildPath "Import"
 
-# Logging control switches
+# ---------------------------[ Logging Control ]---------------------------
+
 $log = $true                     # Set to $false to disable logging in shell
 $enableLogFile = $false          # Set to $false to disable file output
 
 # Define the log output location
-$logFileDirectory = $PSScriptRoot
-$logFile = "$logFileDirectory\$logFileName"
+$logFileDirectory = "$PSScriptRoot"
+$logFile = Join-Path -Path $logFileDirectory -ChildPath $logFileName
+
+# ---------------------------[ Logging Setup ]---------------------------
 
 # Ensure the log directory exists
 if ($enableLogFile -and -not (Test-Path $logFileDirectory)) {
@@ -115,15 +117,14 @@ if (-not (Get-Module Microsoft.Graph)) {
         Write-Log "Failed to import Microsoft.Graph module: $_" -Tag "Error"
         Complete-Script -ExitCode 1
     }
-} else {
-    Write-Log "Microsoft.Graph module is already loaded." -Tag "Info"
 }
 
 # ---------------------------[ Graph Authentication ]---------------------------
+
 $connected = $false
 try {
     $context = Get-MgContext
-    if ($null -ne $context.Account -and $null -ne $context.Scopes -and $context.Scopes -contains "DeviceManagementConfiguration.ReadWrite.All") {
+    if ($null -ne $context.Account -and $null -ne $context.Scopes -and $graphScopes | ForEach-Object { $context.Scopes -contains $_ }) {
         Write-Log "Microsoft Graph already connected as $($context.Account)" -Tag "Success"
         $connected = $true
     } else {
@@ -135,7 +136,7 @@ try {
 
 if (-not $connected) {
     try {
-        Connect-MgGraph -Scopes "DeviceManagementConfiguration.ReadWrite.All" | Out-Null
+        Connect-MgGraph -Scopes $graphScopes | Out-Null
         Write-Log "Connected to Microsoft Graph successfully." -Tag "Success"
     } catch {
         Write-Log "Failed to connect to Microsoft Graph: $_" -Tag "Error"
@@ -144,64 +145,79 @@ if (-not $connected) {
 }
 
 # ---------------------------[ Get Tenant ID ]---------------------------
+
 try {
-    $tenantId = (Get-MgOrganization).Id
+    $tenantResponse = Invoke-MgGraphRequest -Method GET -Uri "https://graph.microsoft.com/v1.0/organization" -ErrorAction Stop
+    $tenantId = $tenantResponse.value[0].id
     Write-Log "Retrieved tenant ID: $tenantId" -Tag "Info"
 } catch {
     Write-Log "Failed to retrieve tenant ID: $_" -Tag "Error"
+    Complete-Script -ExitCode 2
+}
+
+# ---------------------------[ Fetch Existing DisplayNames ]---------------------------
+
+try {
+    $existingResponse = Invoke-MgGraphRequest -Method GET -Uri $uri -ErrorAction Stop
+    $existingConfigs = $existingResponse.value | Where-Object { $_.'@odata.type' -eq '#microsoft.graph.windows10CustomConfiguration' }
+    $existingNames = $existingConfigs.displayName
+    Write-Log "Retrieved $($existingNames.Count) existing custom policies for comparison." -Tag "Info"
+} catch {
+    Write-Log "Failed to fetch existing configurations: $_" -Tag "Error"
+    Complete-Script -ExitCode 5
+}
+
+# ---------------------------[ Import JSON Files ]---------------------------
+
+if (-not (Test-Path -Path $importDir)) {
+    Write-Log "Import directory not found: $importDir" -Tag "Error"
     Complete-Script -ExitCode 1
 }
 
-# ---------------------------[ Process JSON Files ]---------------------------
-
-if (-not (Test-Path $importPath)) {
-    Write-Log "Import path '$importPath' not found." -Tag "Error"
+$files = Get-ChildItem -Path $importDir -Filter *.json
+if ($files.Count -eq 0) {
+    Write-Log "No JSON files found in $importDir" -Tag "Error"
     Complete-Script -ExitCode 1
 }
 
-$jsonFiles = Get-ChildItem -Path $importPath -Filter *.json
-if ($jsonFiles.Count -eq 0) {
-    Write-Log "No JSON files found in $importPath." -Tag "Error"
-    Complete-Script -ExitCode 1
-}
-
-foreach ($file in $jsonFiles) {
+foreach ($file in $files) {
     try {
-        Write-Log "Processing file: $($file.Name)" -Tag "Info"
-        $policy = Get-Content -Path $file.FullName -Raw | ConvertFrom-Json
+        $json = Get-Content -Raw -Path $file.FullName | ConvertFrom-Json
+        $profileName = $json.displayName
 
-        # Build OMA settings block (with tenant ID replacement and type-specific handling)
-        $convertedSettings = @()
-        foreach ($setting in $policy.omaSettings) {
-            $omaSetting = @{
-                "@odata.type" = $setting.odataType
-                displayName   = $setting.displayName
-                description   = $setting.description
-                omaUri        = ($setting.omaUri -replace '\{TenantID\}', $tenantId)
-                value         = $setting.value
-            }
-
-            # Only include isEncrypted if setting type is encrypted string
-            if ($setting.odataType -eq "#microsoft.graph.omaSettingStringEncrypted") {
-                $omaSetting["isEncrypted"] = $true
-            }
-
-            $convertedSettings += $omaSetting
+        if ($existingNames -contains $profileName) {
+            Write-Log "Policy '$profileName' already exists. Skipping." -Tag "Info"
+            continue
         }
 
-        # Create the configuration profile with settings
-        $null = New-MgDeviceManagementDeviceConfiguration -BodyParameter @{
-            "@odata.type" = "#microsoft.graph.windows10CustomConfiguration"
-            displayName   = $policy.displayName
-            description   = $policy.description
-            omaSettings   = $convertedSettings
+        # Build properly typed omaSettings array
+        $omaSettings = @()
+        foreach ($s in $json.omaSettings) {
+            $omaSettings += [pscustomobject]@{
+                '@odata.type' = $s.odataType
+                displayName   = $s.displayName
+                description   = $s.description
+                omaUri        = ($s.omaUri -replace '\{TenantID\}', $tenantId)
+                value         = $s.value
+            }
         }
 
-        Write-Log "Successfully imported policy '$($policy.displayName)'" -Tag "Success"
+        # Compose payload with proper formatting
+        $payload = [pscustomobject]@{
+            '@odata.type' = '#microsoft.graph.windows10CustomConfiguration'
+            displayName   = $json.displayName
+            description   = $json.description
+            omaSettings   = $omaSettings
+        }
+
+        $body = $payload | ConvertTo-Json -Depth 10 -Compress
+        # Write-Log "Importing profile: $profileName" -Tag "Debug"
+
+        Invoke-MgGraphRequest -Method POST -Uri $uri -Body $body -ContentType "application/json" -ErrorAction Stop | Out-Null
+        Write-Log "Successfully imported '$profileName'" -Tag "Success"
     } catch {
         Write-Log "Failed to import '$($file.Name)': $_" -Tag "Error"
     }
 }
 
-# ---------------------------[ Complete Script ]---------------------------
 Complete-Script -ExitCode 0

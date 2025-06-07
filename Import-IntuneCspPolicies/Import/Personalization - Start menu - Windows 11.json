@@ -1,0 +1,41 @@
+{
+  "displayName": "Personalization - Start menu - Windows 11",
+  "description": null,
+  "omaSettings": [
+    {
+      "displayName": "AllowNewsAndInterests",
+      "description": null,
+      "omaUri": "./Device/Vendor/MSFT/Policy/Config/NewsAndInterests/AllowNewsAndInterests",
+      "value": 0,
+      "odataType": "#microsoft.graph.omaSettingInteger"
+    },
+    {
+      "displayName": "PinnedApps",
+      "description": null,
+      "omaUri": "./Device/Vendor/MSFT/Policy/Config/Start/ConfigureStartPins",
+      "value": "****",
+      "odataType": "#microsoft.graph.omaSettingString"
+    },
+    {
+      "displayName": "FileExplorer",
+      "description": null,
+      "omaUri": "./Device/Vendor/MSFT/Policy/Config/Start/AllowPinnedFolderFileExplorer",
+      "value": 1,
+      "odataType": "#microsoft.graph.omaSettingInteger"
+    },
+    {
+      "displayName": "Settings",
+      "description": null,
+      "omaUri": "./Device/Vendor/MSFT/Policy/Config/Start/AllowPinnedFolderSettings",
+      "value": 1,
+      "odataType": "#microsoft.graph.omaSettingInteger"
+    },
+    {
+      "displayName": "HideRecentlyAddedApps",
+      "description": null,
+      "omaUri": "./Device/Vendor/MSFT/Policy/Config/Start/HideRecentlyAddedApps",
+      "value": 1,
+      "odataType": "#microsoft.graph.omaSettingInteger"
+    }
+  ]
+}
