@@ -1,0 +1,49 @@
+{
+  "displayName": "301 - User - Block - Microsoft Azure",
+  "state": "enabledForReportingButNotEnforced",
+  "conditions": {
+    "clientAppTypes": [
+      "all"
+    ],
+    "applications": {
+      "includeUserActions": [],
+      "excludeApplications": [],
+      "includeAuthenticationContextClassReferences": [],
+      "includeApplications": [
+        "797f4846-ba00-4fd7-ba43-dac1f8f63013"
+      ]
+    },
+    "signInRiskLevels": [],
+    "userRiskLevels": [],
+    "users": {
+      "excludeUsers": [
+        "<EmergencyAccessAccount>"
+      ],
+      "includeUsers": [
+        "All"
+      ],
+      "excludeGroups": [
+        "<EligibleAdminsGroup>",
+        "<MicrosoftAzureExclusions>"
+      ],
+      "excludeRoles": [],
+      "includeGroups": [],
+      "includeRoles": [],
+      "excludeGuestsOrExternalUsers": {
+        "externalTenants": {
+          "@odata.type": "#microsoft.graph.conditionalAccessAllExternalTenants",
+          "membershipKind": "all"
+        },
+        "guestOrExternalUserTypes": "internalGuest,b2bCollaborationGuest,b2bCollaborationMember,b2bDirectConnectUser,otherExternalUser,serviceProvider"
+      }
+    }
+  },
+  "grantControls": {
+    "operator": "OR",
+    "builtInControls": [
+      "block"
+    ],
+    "termsOfUse": [],
+    "customAuthenticationFactors": []
+  }
+}

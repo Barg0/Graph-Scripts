@@ -1,0 +1,62 @@
+{
+  "displayName": "303 - User - Require - App protection (Android/iOS)",
+  "state": "enabledForReportingButNotEnforced",
+  "conditions": {
+    "clientAppTypes": [
+      "all"
+    ],
+    "platforms": {
+      "includePlatforms": [
+        "android",
+        "iOS"
+      ],
+      "excludePlatforms": []
+    },
+    "applications": {
+      "includeUserActions": [],
+      "excludeApplications": [],
+      "includeAuthenticationContextClassReferences": [],
+      "includeApplications": [
+        "All"
+      ]
+    },
+    "users": {
+      "includeUsers": [
+        "None"
+      ],
+      "excludeUsers": [
+        "<EmergencyAccessAccount>"
+      ],
+      "excludeGroups": [
+        "<EligibleAdminsGroup>"
+      ],
+      "excludeRoles": [],
+      "includeGroups": [],
+      "includeRoles": [],
+      "excludeGuestsOrExternalUsers": {
+        "externalTenants": {
+          "@odata.type": "#microsoft.graph.conditionalAccessAllExternalTenants",
+          "membershipKind": "all"
+        },
+        "guestOrExternalUserTypes": "internalGuest,b2bCollaborationGuest,b2bCollaborationMember,b2bDirectConnectUser,otherExternalUser,serviceProvider"
+      }
+    },
+    "devices": null,
+    "times": null
+  },
+  "grantControls": {
+    "builtInControls": [
+      "compliantApplication"
+    ],
+    "termsOfUse": [],
+    "authenticationStrength": null,
+    "operator": "OR",
+    "customAuthenticationFactors": []
+  },
+  "sessionControls": {
+    "cloudAppSecurity": {
+      "cloudAppSecurityType": "blockDownloads",
+      "isEnabled": true
+    }
+  }
+}

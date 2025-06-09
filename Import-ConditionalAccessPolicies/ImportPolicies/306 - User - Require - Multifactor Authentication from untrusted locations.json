@@ -1,0 +1,79 @@
+{
+  "displayName": "306 - User - Require - Multifactor Authentication from untrusted locations",
+  "state": "disabled",
+  "conditions": {
+    "clientAppTypes": [
+      "all"
+    ],
+    "applications": {
+      "includeApplications": [
+        "All"
+      ],
+      "excludeApplications": [],
+      "includeAuthenticationContextClassReferences": [],
+      "includeUserActions": [],
+      "applicationFilter": null
+    },
+    "platforms": null,
+    "locations": {
+      "includeLocations": [
+        "All"
+      ],
+      "excludeLocations": [
+        "AllTrusted"
+      ]
+    },
+    "users": {
+      "includeUsers": [
+        "All"
+      ],
+      "excludeUsers": [
+        "<EmergencyAccessAccount>"
+      ],
+      "excludeGroups": [
+        "<EligibleAdminsGroup>"
+      ],
+      "excludeRoles": [
+        "d29b2b05-8046-44ba-8758-1e26182fcf32",
+        "a92aed5d-d78a-4d16-b381-09adb37eb3b0"
+      ],
+      "includeGroups": [],
+      "includeRoles": [],
+      "includeGuestsOrExternalUsers": null,
+      "excludeGuestsOrExternalUsers": {
+        "externalTenants": {
+          "@odata.type": "#microsoft.graph.conditionalAccessAllExternalTenants",
+          "membershipKind": "all"
+        },
+        "guestOrExternalUserTypes": "internalGuest,b2bCollaborationGuest,b2bCollaborationMember,b2bDirectConnectUser,otherExternalUser,serviceProvider"
+      }
+    },
+    "devices": null,
+    "clientApplications": null,
+    "signInRiskLevels": [],
+    "userRiskLevels": [],
+    "deviceStates": null,
+    "times": null
+  },
+  "grantControls": {
+    "operator": "OR",
+    "builtInControls": [],
+    "termsOfUse": [],
+    "customAuthenticationFactors": [],
+    "authenticationStrength": {
+      "id": "00000000-0000-0000-0000-000000000002",
+      "displayName": "Multifactor authentication"
+    }
+  },
+  "sessionControls": {
+    "continuousAccessEvaluation": {
+      "mode": "strictLocation"
+    },
+    "signInFrequency": null,
+    "cloudAppSecurity": null,
+    "disableResilienceDefaults": null,
+    "secureSignInSession": null,
+    "persistentBrowser": null,
+    "applicationEnforcedRestrictions": null
+  }
+}

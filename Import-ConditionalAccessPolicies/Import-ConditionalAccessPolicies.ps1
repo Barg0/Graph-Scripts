@@ -1,37 +1,36 @@
-# Script version:   2025-06-04 13:33
+# Script version:   2025-06-08
 # Script author:    Barg0
 
 # ---------------------------[ Script Start Timestamp ]---------------------------
 
-# Capture start time to log script duration
 $scriptStartTime = Get-Date
 
-# ---------------------------[ Paramter ]---------------------------
+# ---------------------------[ Parameters ]---------------------------
 
 $graphScopes = @(
-
+    "Policy.Read.All",
     "Policy.ReadWrite.ConditionalAccess",
-    "Application.Read.All"
+    "Directory.Read.All",
     "User.Read.All"
 )
-$graphUri = "https://graph.microsoft.com/beta/identity/conditionalAccess/policies"
-$importDir = Join-Path -Path $PSScriptRoot -ChildPath "Import"
 
-# ---------------------------[ Script name ]---------------------------
-
-# Script name used for folder/log naming
 $scriptName = "Import-ConditionalAccessPolicies"
-$logFileName = "$($scriptName)"
+$logFileName = "$($scriptName).log"
 
-# ---------------------------[ Logging Setup ]---------------------------
+$importDir = Join-Path -Path $PSScriptRoot -ChildPath "ImportPolicies"
 
-# Logging control switches
+$scriptStartTime = Get-Date
+
+# ---------------------------[ Logging Control ]---------------------------
+
 $log = $true                     # Set to $false to disable logging in shell
 $enableLogFile = $false          # Set to $false to disable file output
 
 # Define the log output location
 $logFileDirectory = "$PSScriptRoot"
-$logFile = "$logFileDirectory\$logFileName"
+$logFile = Join-Path -Path $logFileDirectory -ChildPath $logFileName
+
+# ---------------------------[ Logging Setup ]---------------------------
 
 # Ensure the log directory exists
 if ($enableLogFile -and -not (Test-Path $logFileDirectory)) {
@@ -94,6 +93,11 @@ function Complete-Script {
 }
 # Complete-Script -ExitCode 0
 
+# ---------------------------[ Script Start ]---------------------------
+
+Write-Log "======== Script Started ========" -Tag "Start"
+Write-Log "ComputerName: $env:COMPUTERNAME | User: $env:USERNAME | Script: $scriptName" -Tag "Info"
+
 # ---------------------------[ Graph SDK Setup ]---------------------------
 
 if (-not (Get-Module -ListAvailable -Name Microsoft.Graph)) {
@@ -117,8 +121,6 @@ if (-not (Get-Module Microsoft.Graph)) {
         Write-Log "Failed to import Microsoft.Graph module: $_" -Tag "Error"
         Complete-Script -ExitCode 1
     }
-} else {
-    Write-Log "Microsoft.Graph module is already loaded." -Tag "Info"
 }
 
 # ---------------------------[ Graph Authentication ]---------------------------
@@ -126,7 +128,7 @@ if (-not (Get-Module Microsoft.Graph)) {
 $connected = $false
 try {
     $context = Get-MgContext
-    if ($null -ne $context.Account -and $null -ne $context.Scopes -and $context.Scopes -contains "Policy.ReadWrite.ConditionalAccess") {
+    if ($null -ne $context.Account -and $null -ne $context.Scopes -and $context.Scopes -contains $graphScopes) {
         Write-Log "Microsoft Graph already connected as $($context.Account)" -Tag "Success"
         $connected = $true
     } else {
@@ -146,85 +148,189 @@ if (-not $connected) {
     }
 }
 
-# ---------------------------[ Prompt for UserPrincipalName ]---------------------------
+# ---------------------------[ Prompt for Emergency Access UPN ]---------------------------
 
-$userPrincipalName = Read-Host "Enter the UPN of the user to exclude from all policies"
+$emergencyUpn = Read-Host "Enter the UPN of the emergency access account"
 try {
-    $userObject = Get-MgUser -UserId $userPrincipalName -ErrorAction Stop
-    $excludedUserId = $userObject.Id
-    Write-Log "User found: $($userObject.DisplayName) [$excludedUserId]" -Tag "Success"
+    $emergencyUser = Get-MgUser -UserId $emergencyUpn -ErrorAction Stop
+    $emergencyAccessAccountId = $emergencyUser.Id
+    Write-Log "Found user '$($emergencyUser.DisplayName)' with ID $emergencyAccessAccountId" -Tag "Success"
 } catch {
-    Write-Log "Failed to resolve user '$userPrincipalName': $_" -Tag "Error"
+    Write-Log "Failed to find user with UPN '$emergencyUpn': $_" -Tag "Error"
     Complete-Script -ExitCode 1
 }
 
-# ---------------------------[ Validate Import Folder ]---------------------------
+# ---------------------------[ Helpers for object creation ]---------------------------
 
-if (-not (Test-Path -Path $importDir)) {
-    Write-Log "Import directory not found: $importDir" -Tag "Error"
-    Complete-Script -ExitCode 1
+function GetOrCreateGroup {
+    param([string]$DisplayName)
+
+    $group = Get-MgGroup -Filter "displayName eq '$DisplayName'" -ConsistencyLevel eventual -CountVariable count
+    if ($group) {
+        Write-Log "Group '$DisplayName' already exists." -Tag "Info"
+        return $group.Id
+    }
+
+    Write-Log "Creating group '$DisplayName'" -Tag "Info"
+    $groupBody = @{
+        displayName     = $DisplayName
+        mailEnabled     = $false
+        mailNickname    = ($DisplayName -replace ' ', '')
+        securityEnabled = $true
+        groupTypes      = @()
+    }
+
+    $newGroup = New-MgGroup -BodyParameter $groupBody
+    Write-Log "Group '$DisplayName' created with ID: $($newGroup.Id)" -Tag "Success"
+    return $newGroup.Id
 }
 
-# ---------------------------[ Import Each Policy ]---------------------------
+function GetOrCreateCountryNamedLocation {
+    param ([string]$Name, [string[]]$Countries)
 
-$files = Get-ChildItem -Path $importDir -Filter *.json
-if ($files.Count -eq 0) {
-    Write-Log "No JSON files found in $importDir" -Tag "Error"
-    Complete-Script -ExitCode 1
+    $existing = (Invoke-MgGraphRequest -Method GET -Uri "https://graph.microsoft.com/beta/identity/conditionalAccess/namedLocations").value |
+        Where-Object { $_.displayName -eq $Name -and $_.'@odata.type' -eq '#microsoft.graph.countryNamedLocation' }
+
+    if ($existing) {
+        Write-Log "Named location '$Name' already exists with ID: $($existing.id)" -Tag "Info"
+        return $existing.id
+    }
+
+    $body = @{
+        "@odata.type" = "#microsoft.graph.countryNamedLocation"
+        displayName = $Name
+        countriesAndRegions = $Countries
+        includeUnknownCountriesAndRegions = $false
+    }
+
+    $location = Invoke-MgGraphRequest -Method POST -Uri "https://graph.microsoft.com/beta/identity/conditionalAccess/namedLocations" -Body ($body | ConvertTo-Json -Depth 3)
+    Write-Log "Named location '$Name' created with ID: $($location.id)" -Tag "Success"
+    return $location.id
 }
 
-Write-Log "Found $($files.Count) policy files to import." -Tag "Info"
+function GetOrCreateIpNamedLocation {
+    param (
+        [string]$Name,
+        [string[]]$IpRanges,
+        [switch]$IsTrusted
+    )
 
-foreach ($file in $files) {
-    Write-Log "Processing file: $($file.Name)" -Tag "Info"
+    $existing = (Invoke-MgGraphRequest -Method GET -Uri "https://graph.microsoft.com/beta/identity/conditionalAccess/namedLocations").value |
+        Where-Object { $_.displayName -eq $Name -and $_.'@odata.type' -eq '#microsoft.graph.ipNamedLocation' }
+
+    if ($existing) {
+        Write-Log "IP Named location '$Name' already exists with ID: $($existing.id)" -Tag "Info"
+        return $existing.id
+    }
+
+    $body = @{
+        "@odata.type" = "#microsoft.graph.ipNamedLocation"
+        displayName = $Name
+        isTrusted = $IsTrusted.IsPresent
+        ipRanges = $IpRanges | ForEach-Object { @{ cidrAddress = $_ } }
+    }
+
+    $location = Invoke-MgGraphRequest -Method POST -Uri "https://graph.microsoft.com/beta/identity/conditionalAccess/namedLocations" -Body ($body | ConvertTo-Json -Depth 4)
+    Write-Log "IP Named location '$Name' created with ID: $($location.id)" -Tag "Success"
+    return $location.id
+}
+
+function Test-AuthenticationContext {
+    $displayName = "Privileged Role Activation"
+    $customId = "c1"
+
+    $existing = (Invoke-MgGraphRequest -Method GET -Uri "https://graph.microsoft.com/beta/identity/conditionalAccess/authenticationContextClassReferences").value |
+        Where-Object { $_.displayName -eq $displayName }
+
+    if ($null -ne $existing) {
+        Write-Log "Authentication Context '$displayName' already exists with ID: $($existing.id)" -Tag "Info"
+        return $existing.id
+    }
+
+    Write-Log "Creating Authentication Context '$displayName' with ID '$customId'" -Tag "Info"
+
+    $body = @{
+        id = $customId
+        displayName = $displayName
+        description = "Privileged role elevation protection"
+        isAvailable = $true
+    }
 
     try {
-        $rawContent = Get-Content -Path $file.FullName -Raw -ErrorAction Stop
-        $policy = $rawContent | ConvertFrom-Json -ErrorAction Stop
+        $created = Invoke-MgGraphRequest -Method POST -Uri "https://graph.microsoft.com/beta/identity/conditionalAccess/authenticationContextClassReferences" -Body ($body | ConvertTo-Json -Depth 3)
+        Write-Log "Authentication Context '$displayName' created with ID: $($created.id)" -Tag "Success"
+        return $created.id
     } catch {
-        Write-Log "Failed to read or parse JSON from $($file.Name): $_" -Tag "Error"
-        continue
-    }
-
-    # ---------------------------[ Modify Policy ]---------------------------
-
-    # Remove read-only Graph-managed properties
-    $nullProps = @("id", "createdDateTime", "modifiedDateTime")
-    foreach ($prop in $nullProps) {
-        if ($policy.PSObject.Properties.Name -contains $prop) {
-            $policy.PSObject.Properties.Remove($prop)
-        }
-    }
-
-    # Enforce report-only mode
-    $policy.state = "temporaryAccessPassOneTime"
-
-    # Ensure excludeUsers includes specified user
-    if (-not $policy.conditions) {
-        $policy | Add-Member -MemberType NoteProperty -Name conditions -Value @{}
-    }
-    if (-not $policy.conditions.users) {
-        $policy.conditions | Add-Member -MemberType NoteProperty -Name users -Value @{}
-    }
-    if (-not $policy.conditions.users.excludeUsers) {
-        $policy.conditions.users.excludeUsers = @()
-    }
-
-    if ($policy.conditions.users.excludeUsers -notcontains $excludedUserId) {
-        $policy.conditions.users.excludeUsers += $excludedUserId
-        Write-Log "Added user to excludeUsers: $excludedUserId" -Tag "Debug"
-    }
-
-    # ---------------------------[ Import ]---------------------------
-
-    try {
-        Invoke-MgGraphRequest -Method POST -Uri $graphUri -Body ($policy | ConvertTo-Json -Depth 10 -Compress)
-        Write-Log "Successfully imported: $($policy.displayName)" -Tag "Success"
-    } catch {
-        Write-Log "Failed to import $($file.Name): $_" -Tag "Error"
+        Write-Log "Failed to create Authentication Context '$displayName': $_" -Tag "Error"
+        Complete-Script -ExitCode 1
     }
 }
 
-# ---------------------------[ Script End ]---------------------------
+function Test-TemporaryAccessPassAuthStrength {
+    $displayName = "Temporary Access Pass"
+    $description = "Requires a one-time use Temporary Access Pass for secure and time-limited authentication scenarios."
+
+    $existing = (Invoke-MgGraphRequest -Method GET -Uri "https://graph.microsoft.com/beta/policies/authenticationStrengthPolicies").value |
+        Where-Object { $_.displayName -eq $displayName }
+
+    if ($null -ne $existing) {
+        Write-Log "Authentication Strength '$displayName' already exists with ID: $($existing.id)" -Tag "Info"
+        return $existing.id
+    }
+
+    Write-Log "Creating Authentication Strength '$displayName'" -Tag "Info"
+
+    $body = @{
+        displayName = $displayName
+        description = $description
+        policyType = "custom"
+        allowedCombinations = @("temporaryAccessPassOneTime")
+    }
+
+    try {
+        $created = Invoke-MgGraphRequest -Method POST -Uri "https://graph.microsoft.com/beta/policies/authenticationStrengthPolicies" -Body ($body | ConvertTo-Json -Depth 3)
+        Write-Log "Authentication Strength '$displayName' created with ID: $($created.id)" -Tag "Success"
+        return $created.id
+    } catch {
+        Write-Log "Failed to create Authentication Strength '$displayName': $_" -Tag "Error"
+        Complete-Script -ExitCode 1
+    }
+}
+# ---------------------------[ Object Creation ]---------------------------
+
+$eligibleAdminsGroupId = GetOrCreateGroup -DisplayName "Conditional Access - Eligible admins"
+$azureExclusionsGroupId = GetOrCreateGroup -DisplayName "Conditional Access - Microsoft Azure exclusions"
+$countriesAllowedId = GetOrCreateCountryNamedLocation -Name "Countries - Allowed" -Countries @("DE", "LU")
+GetOrCreateIpNamedLocation -Name "IP ranges - Company" -IpRanges @("10.10.10.10/32") -IsTrusted
+$temporaryAccessPassId = Test-TemporaryAccessPassAuthStrength
+Test-AuthenticationContext
+
+# ---------------------------[ Import Policies ]---------------------------
+
+$existingPolicies = (Invoke-MgGraphRequest -Method GET -Uri "https://graph.microsoft.com/beta/identity/conditionalAccess/policies").value
+
+Get-ChildItem -Path $importDir -Filter *.json | ForEach-Object {
+    $file = $_.FullName
+    $json = Get-Content -Path $file -Raw | ConvertFrom-Json
+
+    if ($existingPolicies.displayName -contains $json.displayName) {
+        Write-Log "Skipping import: Policy '$($json.displayName)' already exists." -Tag "Info"
+        return
+    }
+
+    $json = $json | ConvertTo-Json -Depth 10
+    $json = $json -replace "<EmergencyAccessAccount>", $emergencyAccessAccountId
+    $json = $json -replace "<EligibleAdminsGroup>", $eligibleAdminsGroupId
+    $json = $json -replace "<MicrosoftAzureExclusions>", $azureExclusionsGroupId
+    $json = $json -replace "<CountriesAllowed>", $countriesAllowedId
+    $json = $json -replace "<TemporaryAccessPass>", $temporaryAccessPassId
+
+    try {
+        Invoke-MgGraphRequest -Method POST -Uri "https://graph.microsoft.com/beta/identity/conditionalAccess/policies" -Body $json -ErrorAction Stop | Out-Null
+        Write-Log "Successfully imported policy '$($file)'." -Tag "Success"
+    } catch {
+        Write-Log "Failed to import policy '$($file)': $_" -Tag "Error"
+    }
+}
 
 Complete-Script -ExitCode 0

@@ -1,0 +1,72 @@
+{
+  "displayName": "305 - User - Require - Hybrid join on Remote-Desktop Servers",
+  "state": "enabledForReportingButNotEnforced",
+  "conditions": {
+    "clientAppTypes": [
+      "all"
+    ],
+    "applications": {
+      "includeApplications": [
+        "All"
+      ],
+      "excludeApplications": [],
+      "includeAuthenticationContextClassReferences": [],
+      "includeUserActions": [],
+      "applicationFilter": null
+    },
+    "platforms": {
+      "includePlatforms": [
+        "windows"
+      ],
+      "excludePlatforms": []
+    },
+    "users": {
+      "includeUsers": [
+        "All"
+      ],
+      "excludeUsers": [
+        "<EmergencyAccessAccount>"
+      ],
+      "excludeGroups": [
+        "<EligibleAdminsGroup>"
+      ],
+      "excludeRoles": [],
+      "includeGroups": [],
+      "includeRoles": [],
+      "includeGuestsOrExternalUsers": null,
+      "excludeGuestsOrExternalUsers": {
+        "externalTenants": {
+          "@odata.type": "#microsoft.graph.conditionalAccessAllExternalTenants",
+          "membershipKind": "all"
+        },
+        "guestOrExternalUserTypes": "internalGuest,b2bCollaborationGuest,b2bCollaborationMember,b2bDirectConnectUser,otherExternalUser,serviceProvider"
+      }
+    },
+    "devices": {
+      "deviceFilter": {
+        "mode": "include",
+        "rule": "device.deviceId -eq \"ee084126-7076-45f3-97c6-cc65dd523c78\""
+      },
+      "includeDeviceStates": [],
+      "includeDevices": [],
+      "excludeDevices": [],
+      "excludeDeviceStates": []
+    },
+    "locations": null,
+    "clientApplications": null,
+    "signInRiskLevels": [],
+    "userRiskLevels": [],
+    "deviceStates": null,
+    "times": null
+  },
+  "grantControls": {
+    "operator": "OR",
+    "builtInControls": [
+      "domainJoinedDevice"
+    ],
+    "termsOfUse": [],
+    "customAuthenticationFactors": [],
+    "authenticationStrength": null
+  },
+  "sessionControls": null
+}

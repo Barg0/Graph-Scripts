@@ -1,0 +1,66 @@
+{
+  "displayName": "307 - User - Require - Token protection for desktop apps",
+  "state": "enabledForReportingButNotEnforced",
+  "conditions": {
+    "clientAppTypes": [
+      "mobileAppsAndDesktopClients"
+    ],
+    "platforms": {
+      "includePlatforms": [
+        "windows"
+      ],
+      "excludePlatforms": []
+    },
+    "locations": null,
+    "applications": {
+      "includeApplications": [
+        "00000002-0000-0ff1-ce00-000000000000",
+        "00000003-0000-0ff1-ce00-000000000000"
+      ],
+      "excludeApplications": [],
+      "includeAuthenticationContextClassReferences": [],
+      "includeUserActions": [],
+      "applicationFilter": null
+    },
+    "users": {
+      "includeUsers": [
+        "All"
+      ],
+      "excludeUsers": [
+        "<EmergencyAccessAccount>"
+      ],
+      "excludeGroups": [
+        "<EligibleAdminsGroup>"
+      ],
+      "excludeRoles": [],
+      "includeGroups": [],
+      "includeRoles": [],
+      "includeGuestsOrExternalUsers": null,
+      "excludeGuestsOrExternalUsers": {
+        "externalTenants": {
+          "@odata.type": "#microsoft.graph.conditionalAccessAllExternalTenants",
+          "membershipKind": "all"
+        },
+        "guestOrExternalUserTypes": "internalGuest,b2bCollaborationGuest,b2bCollaborationMember,b2bDirectConnectUser,otherExternalUser,serviceProvider"
+      }
+    },
+    "clientApplications": null,
+    "signInRiskLevels": [],
+    "userRiskLevels": [],
+    "deviceStates": null,
+    "devices": null,
+    "times": null
+  },
+  "grantControls": null,
+  "sessionControls": {
+    "secureSignInSession": {
+      "isEnabled": true
+    },
+    "continuousAccessEvaluation": null,
+    "signInFrequency": null,
+    "cloudAppSecurity": null,
+    "disableResilienceDefaults": null,
+    "persistentBrowser": null,
+    "applicationEnforcedRestrictions": null
+  }
+}

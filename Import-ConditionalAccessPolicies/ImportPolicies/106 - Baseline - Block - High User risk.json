@@ -1,0 +1,42 @@
+{
+  "displayName": "106 - Baseline - Block - High User risk",
+  "state": "enabledForReportingButNotEnforced",
+  "conditions": {
+    "clientAppTypes": [
+      "all"
+    ],
+    "applications": {
+      "includeUserActions": [],
+      "excludeApplications": [],
+      "includeAuthenticationContextClassReferences": [],
+      "includeApplications": [
+        "All"
+      ]
+    },
+    "signInRiskLevels": [],
+    "userRiskLevels": [
+      "high"
+    ],
+    "users": {
+      "excludeUsers": [
+        "<EmergencyAccessAccount>"
+      ],
+      "includeUsers": [
+        "All"
+      ],
+      "excludeGroups": [],
+      "excludeRoles": [],
+      "includeGroups": [],
+      "includeRoles": []
+    }
+  },
+  "grantControls": {
+    "operator": "OR",
+    "builtInControls": [
+      "block"
+    ],
+    "termsOfUse": [],
+    "customAuthenticationFactors": []
+  },
+  "sessionControls": null
+}

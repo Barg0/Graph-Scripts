@@ -1,0 +1,61 @@
+{
+  "displayName": "304 - User - Require - Compliant device",
+  "state": "enabledForReportingButNotEnforced",
+  "conditions": {
+    "clientAppTypes": [
+      "all"
+    ],
+    "applications": {
+      "includeApplications": [
+        "All"
+      ],
+      "excludeApplications": [],
+      "includeAuthenticationContextClassReferences": [],
+      "includeUserActions": [],
+      "applicationFilter": null
+    },
+    "users": {
+      "includeUsers": [
+        "All"
+      ],
+      "excludeUsers": [
+        "<EmergencyAccessAccount>"
+      ],
+      "excludeGroups": [
+        "<EligibleAdminsGroup>"
+      ],
+      "excludeRoles": [
+        "d29b2b05-8046-44ba-8758-1e26182fcf32",
+        "a92aed5d-d78a-4d16-b381-09adb37eb3b0"
+      ],
+      "includeGroups": [],
+      "includeRoles": [],
+      "includeGuestsOrExternalUsers": null,
+      "excludeGuestsOrExternalUsers": {
+        "externalTenants": {
+          "@odata.type": "#microsoft.graph.conditionalAccessAllExternalTenants",
+          "membershipKind": "all"
+        },
+        "guestOrExternalUserTypes": "internalGuest,b2bCollaborationGuest,b2bCollaborationMember,b2bDirectConnectUser,otherExternalUser,serviceProvider"
+      }
+    },
+    "platforms": null,
+    "locations": null,
+    "clientApplications": null,
+    "signInRiskLevels": [],
+    "userRiskLevels": [],
+    "deviceStates": null,
+    "devices": null,
+    "times": null
+  },
+  "grantControls": {
+    "operator": "OR",
+    "builtInControls": [
+      "compliantDevice"
+    ],
+    "termsOfUse": [],
+    "customAuthenticationFactors": [],
+    "authenticationStrength": null
+  },
+  "sessionControls": null
+}

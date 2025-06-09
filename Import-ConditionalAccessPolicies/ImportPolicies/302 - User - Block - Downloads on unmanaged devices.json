@@ -1,0 +1,57 @@
+{
+  "displayName": "302 - User - Block - Downloads on unmanaged devices",
+  "state": "enabledForReportingButNotEnforced",
+  "conditions": {
+    "clientAppTypes": [
+      "browser",
+      "mobileAppsAndDesktopClients"
+    ],
+    "applications": {
+      "includeUserActions": [],
+      "excludeApplications": [],
+      "includeAuthenticationContextClassReferences": [],
+      "includeApplications": [
+        "All"
+      ]
+    },
+    "users": {
+      "excludeUsers": [
+        "<EmergencyAccessAccount>"
+      ],
+      "includeUsers": [
+        "All"
+      ],
+      "excludeGroups": [
+        "<EligibleAdminsGroup>"
+      ],
+      "excludeRoles": [],
+      "includeGroups": [],
+      "includeRoles": [],
+      "excludeGuestsOrExternalUsers": {
+        "externalTenants": {
+          "@odata.type": "#microsoft.graph.conditionalAccessAllExternalTenants",
+          "membershipKind": "all"
+        },
+        "guestOrExternalUserTypes": "internalGuest,b2bCollaborationGuest,b2bCollaborationMember,b2bDirectConnectUser,otherExternalUser,serviceProvider"
+      }
+    },
+    "devices": {
+      "deviceFilter": {
+        "mode": "exclude",
+        "rule": "device.deviceOwnership -eq \"Company\""
+      },
+      "includeDeviceStates": [],
+      "includeDevices": [],
+      "excludeDevices": [],
+      "excludeDeviceStates": []
+    },
+    "signInRiskLevels": [],
+    "userRiskLevels": []
+  },
+  "sessionControls": {
+    "cloudAppSecurity": {
+      "cloudAppSecurityType": "blockDownloads",
+      "isEnabled": true
+    }
+  }
+}

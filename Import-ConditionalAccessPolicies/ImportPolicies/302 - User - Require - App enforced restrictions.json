@@ -1,0 +1,45 @@
+{
+  "displayName": "302 - User - Require - App enforced restrictions",
+  "state": "enabledForReportingButNotEnforced",
+  "conditions": {
+    "clientAppTypes": [
+      "browser"
+    ],
+    "applications": {
+      "includeUserActions": [],
+      "excludeApplications": [],
+      "includeAuthenticationContextClassReferences": [],
+      "includeApplications": [
+        "Office365"
+      ]
+    },
+    "users": {
+      "excludeUsers": [
+        "<EmergencyAccessAccount>"
+      ],
+      "includeUsers": [
+        "All"
+      ],
+      "excludeGroups": [
+        "<EligibleAdminsGroup>"
+      ],
+      "excludeRoles": [],
+      "includeGroups": [],
+      "includeRoles": [],
+      "excludeGuestsOrExternalUsers": {
+        "externalTenants": {
+          "@odata.type": "#microsoft.graph.conditionalAccessAllExternalTenants",
+          "membershipKind": "all"
+        },
+        "guestOrExternalUserTypes": "internalGuest,b2bCollaborationGuest,b2bCollaborationMember,b2bDirectConnectUser,otherExternalUser,serviceProvider"
+      }
+    },
+    "signInRiskLevels": [],
+    "userRiskLevels": []
+  },
+  "sessionControls": {
+    "applicationEnforcedRestrictions": {
+      "isEnabled": true
+    }
+  }
+}
