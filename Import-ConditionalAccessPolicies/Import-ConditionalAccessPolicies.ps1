@@ -223,16 +223,30 @@ function GetOrCreateIpNamedLocation {
         return $existing.id
     }
 
-    $body = @{
-        "@odata.type" = "#microsoft.graph.ipNamedLocation"
-        displayName = $Name
-        isTrusted = $IsTrusted.IsPresent
-        ipRanges = $IpRanges | ForEach-Object { @{ cidrAddress = $_ } }
+    # Properly format ipRanges array with required @odata.type
+    $formattedRanges = @()
+    foreach ($range in $IpRanges) {
+        $formattedRanges += @{
+            "@odata.type" = "#microsoft.graph.iPv4CidrRange"
+            "cidrAddress" = $range
+        }
     }
 
-    $location = Invoke-MgGraphRequest -Method POST -Uri "https://graph.microsoft.com/beta/identity/conditionalAccess/namedLocations" -Body ($body | ConvertTo-Json -Depth 4)
-    Write-Log "IP Named location '$Name' created with ID: $($location.id)" -Tag "Success"
-    return $location.id
+    $body = @{
+        "@odata.type" = "#microsoft.graph.ipNamedLocation"
+        "displayName" = $Name
+        "isTrusted"   = $IsTrusted.IsPresent
+        "ipRanges"    = $formattedRanges
+    }
+
+    try {
+        $response = Invoke-MgGraphRequest -Method POST -Uri "https://graph.microsoft.com/beta/identity/conditionalAccess/namedLocations" -Body ($body | ConvertTo-Json -Depth 10)
+        Write-Log "IP Named location '$Name' created with ID: $($response.id)" -Tag "Success"
+        return $response.id
+    } catch {
+        Write-Log "Failed to create IP Named location '$Name': $_" -Tag "Error"
+        Complete-Script -ExitCode 1
+    }
 }
 
 function Test-AuthenticationContext {
