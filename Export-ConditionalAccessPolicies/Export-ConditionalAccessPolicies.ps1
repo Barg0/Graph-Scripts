@@ -1,32 +1,31 @@
-# Script version:   2025-06-04 13:30
+# Script version:   2025-06-08 10:00
 # Script author:    Barg0
 
-# ---------------------------[ Script Start Timestamp ]---------------------------
-
-# Capture start time to log script duration
 $scriptStartTime = Get-Date
 
-# ---------------------------[ Paramter ]---------------------------
+# ---------------------------[ Parameters ]---------------------------
 
-$GraphScope = "Policy.Read.All"
-$graphUri = "https://graph.microsoft.com/beta/identity/conditionalAccess/policies"
-$outputDir = Join-Path -Path $PSScriptRoot -ChildPath "Export"
+$graphScopes = @(
+    "Policy.Read.All"
+)
+$uri = "https://graph.microsoft.com/beta/identity/conditionalAccess/policies"
 
-# ---------------------------[ Script name ]---------------------------
-
-# Script name used for folder/log naming
 $scriptName = "Export-ConditionalAccessPolicies"
-$logFileName = "$($scriptName)"
+$logFileName = "$($scriptName).log"
 
-# ---------------------------[ Logging Setup ]---------------------------
+# Output folder for JSON
+$exportDir = Join-Path -Path $PSScriptRoot -ChildPath "ExportConditionalAccess"
 
-# Logging control switches
+# ---------------------------[ Logging Control ]---------------------------
+
 $log = $true                     # Set to $false to disable logging in shell
 $enableLogFile = $false          # Set to $false to disable file output
 
 # Define the log output location
 $logFileDirectory = "$PSScriptRoot"
-$logFile = "$logFileDirectory\$logFileName"
+$logFile = Join-Path -Path $logFileDirectory -ChildPath $logFileName
+
+# ---------------------------[ Logging Setup ]---------------------------
 
 # Ensure the log directory exists
 if ($enableLogFile -and -not (Test-Path $logFileDirectory)) {
@@ -117,8 +116,6 @@ if (-not (Get-Module Microsoft.Graph)) {
         Write-Log "Failed to import Microsoft.Graph module: $_" -Tag "Error"
         Complete-Script -ExitCode 1
     }
-} else {
-    Write-Log "Microsoft.Graph module is already loaded." -Tag "Info"
 }
 
 # ---------------------------[ Graph Authentication ]---------------------------
@@ -126,11 +123,11 @@ if (-not (Get-Module Microsoft.Graph)) {
 $connected = $false
 try {
     $context = Get-MgContext
-    if ($null -ne $context.Account -and $null -ne $context.Scopes -and $context.Scopes -contains $GraphScope) {
+    if ($null -ne $context.Account -and $null -ne $context.Scopes -and $graphScopes | ForEach-Object { $context.Scopes -contains $_ }) {
         Write-Log "Microsoft Graph already connected as $($context.Account)" -Tag "Success"
         $connected = $true
     } else {
-        Write-Log "Microsoft Graph context incomplete or lacks required scope. Reconnecting..." -Tag "Info"
+        Write-Log "Microsoft Graph context incomplete or lacks required scopes. Reconnecting..." -Tag "Info"
     }
 } catch {
     Write-Log "Microsoft Graph not connected. Attempting connection..." -Tag "Info"
@@ -138,7 +135,7 @@ try {
 
 if (-not $connected) {
     try {
-        Connect-MgGraph -Scopes $GraphScope | Out-Null
+        Connect-MgGraph -Scopes $graphScopes | Out-Null
         Write-Log "Connected to Microsoft Graph successfully." -Tag "Success"
     } catch {
         Write-Log "Failed to connect to Microsoft Graph: $_" -Tag "Error"
@@ -146,57 +143,44 @@ if (-not $connected) {
     }
 }
 
+# ---------------------------[ Create Export Folder ]---------------------------
+
+if (-not (Test-Path -Path $exportDir)) {
+    try {
+        New-Item -ItemType Directory -Force -Path $exportDir | Out-Null
+        Write-Log "Created export folder at $exportDir" -Tag "Info"
+    } catch {
+        Write-Log "Failed to create export directory: $_" -Tag "Error"
+        Complete-Script -ExitCode 1
+    }
+}
+
 # ---------------------------[ Graph API Request ]---------------------------
 
-$uri = $graphUri
-Write-Log "Calling Graph API for Conditional Access policies..." -Tag "Info"
+Write-Log "Querying Conditional Access policies from Microsoft Graph..." -Tag "Info"
+Write-Log "Graph URI: $uri" -Tag "Debug"
 
 try {
-    $response = Invoke-MgGraphRequest -Method GET -Uri $uri -ErrorAction Stop
-    Write-Log "Successfully retrieved Conditional Access policies." -Tag "Success"
+    $policies = Invoke-MgGraphRequest -Method GET -Uri $uri -ErrorAction Stop
+    if ($policies.value.Count -eq 0) {
+        Write-Log "No Conditional Access policies found." -Tag "Info"
+    } else {
+        Write-Log "Found $($policies.value.Count) Conditional Access policies." -Tag "Success"
+
+        foreach ($policy in $policies.value) {
+            $fileName = ($policy.displayName -replace '[\\/:*?"<>|]', "_") + ".json"
+            $exportPath = Join-Path -Path $exportDir -ChildPath $fileName
+            try {
+                $policy | ConvertTo-Json -Depth 10 | Out-File -FilePath $exportPath -Encoding UTF8
+                Write-Log "Exported policy '$($policy.displayName)' to '$fileName'" -Tag "Success"
+            } catch {
+                Write-Log "Failed to export policy '$($policy.displayName)': $_" -Tag "Error"
+            }
+        }
+    }
 } catch {
     Write-Log "Graph API request failed: $_" -Tag "Error"
     Complete-Script -ExitCode 1
 }
-
-# ---------------------------[ Create Export Folder ]---------------------------
-
-if (-not (Test-Path -Path $outputDir)) {
-    try {
-        New-Item -ItemType Directory -Force -Path $outputDir | Out-Null
-        Write-Log "Created export folder at $outputDir" -Tag "Info"
-    } catch {
-        Write-Log "Failed to create export directory at $($outputDir): $_" -Tag "Error"
-        Complete-Script -ExitCode 2
-    }
-} else {
-    Write-Log "Export folder already exists at $outputDir" -Tag "Info"
-}
-
-# ---------------------------[ Export Policies ]---------------------------
-
-$policyCount = $response.value.Count
-Write-Log "Exporting $policyCount policies to individual JSON files..." -Tag "Info"
-
-foreach ($policy in $response.value) {
-    # Use displayName or fallback to ID
-    $name = if ($policy.displayName) { $policy.displayName } else { $policy.id }
-
-    # Sanitize filename
-    $safeName = ($name -replace '[\\/:*?"<>|]', '_') -replace '\s+', '_'
-    $fileName = "$safeName.json"
-    $filePath = Join-Path -Path $outputDir -ChildPath $fileName
-
-    try {
-        $policy | ConvertTo-Json -Depth 10 | Out-File -FilePath $filePath -Encoding UTF8
-        Write-Log "Exported: $fileName" -Tag "Success"
-    } catch {
-        Write-Log "Failed to export policy '$name': $_" -Tag "Error"
-    }
-}
-
-Write-Log "All policies exported to: $outputDir" -Tag "Success"
-
-# ---------------------------[ Script End ]---------------------------
 
 Complete-Script -ExitCode 0
