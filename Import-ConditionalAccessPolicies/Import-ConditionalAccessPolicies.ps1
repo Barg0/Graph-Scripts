@@ -8,6 +8,7 @@ $scriptStartTime = Get-Date
 # ---------------------------[ Parameters ]---------------------------
 
 $graphScopes = @(
+    "Application.Read.All",
     "Policy.Read.All",
     "Policy.ReadWrite.ConditionalAccess",
     "Directory.Read.All",
