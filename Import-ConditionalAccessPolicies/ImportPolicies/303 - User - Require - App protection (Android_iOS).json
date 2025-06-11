@@ -52,7 +52,9 @@
         "8424c6f0-a189-499e-bbd0-26c1753c96d4",
         "3a2c62db-5318-420d-8d74-23affee5d9d5"
       ],
-      "includeGroups": [],
+      "includeGroups": [
+        "<AppProtectionGroup>"
+      ],
       "includeRoles": [],
       "excludeGuestsOrExternalUsers": {
         "externalTenants": {
