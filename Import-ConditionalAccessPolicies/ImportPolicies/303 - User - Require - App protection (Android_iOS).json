@@ -1,29 +1,16 @@
 {
   "displayName": "303 - User - Require - App protection (Android/iOS)",
-  "state": "enabledForReportingButNotEnforced",
+  "state": "enabled",
   "conditions": {
     "clientAppTypes": [
       "all"
     ],
-    "platforms": {
-      "includePlatforms": [
-        "android",
-        "iOS"
-      ],
-      "excludePlatforms": []
-    },
-    "applications": {
-      "includeUserActions": [],
-      "excludeApplications": [],
-      "includeAuthenticationContextClassReferences": [],
-      "includeApplications": [
-        "All"
-      ]
-    },
     "users": {
-      "includeUsers": [
-        "None"
+      "includeUsers": [],
+      "includeGroups": [
+        "<AppProtectionGroup>"
       ],
+      "includeRoles": [],
       "excludeUsers": [
         "<EmergencyAccessAccount>"
       ],
@@ -52,34 +39,47 @@
         "8424c6f0-a189-499e-bbd0-26c1753c96d4",
         "3a2c62db-5318-420d-8d74-23affee5d9d5"
       ],
-      "includeGroups": [
-        "<AppProtectionGroup>"
-      ],
-      "includeRoles": [],
       "excludeGuestsOrExternalUsers": {
+        "guestOrExternalUserTypes": "internalGuest,b2bCollaborationGuest,b2bCollaborationMember,b2bDirectConnectUser,otherExternalUser,serviceProvider",
         "externalTenants": {
           "@odata.type": "#microsoft.graph.conditionalAccessAllExternalTenants",
           "membershipKind": "all"
-        },
-        "guestOrExternalUserTypes": "internalGuest,b2bCollaborationGuest,b2bCollaborationMember,b2bDirectConnectUser,otherExternalUser,serviceProvider"
-      }
+        }
+      },
+      "includeGuestsOrExternalUsers": null
     },
+    "platforms": {
+      "includePlatforms": [
+        "android",
+        "iOS"
+      ],
+      "excludePlatforms": []
+    },
+    "applications": {
+      "includeApplications": [
+        "All"
+      ],
+      "excludeApplications": [],
+      "includeAuthenticationContextClassReferences": [],
+      "applicationFilter": null,
+      "includeUserActions": []
+    },
+    "signInRiskLevels": [],
+    "userRiskLevels": [],
     "devices": null,
-    "times": null
+    "deviceStates": null,
+    "clientApplications": null,
+    "times": null,
+    "locations": null
   },
   "grantControls": {
+    "operator": "OR",
     "builtInControls": [
       "compliantApplication"
     ],
     "termsOfUse": [],
-    "authenticationStrength": null,
-    "operator": "OR",
-    "customAuthenticationFactors": []
+    "customAuthenticationFactors": [],
+    "authenticationStrength": null
   },
-  "sessionControls": {
-    "cloudAppSecurity": {
-      "cloudAppSecurityType": "blockDownloads",
-      "isEnabled": true
-    }
-  }
+  "sessionControls": null
 }
