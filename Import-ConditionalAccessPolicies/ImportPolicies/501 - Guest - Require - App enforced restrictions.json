@@ -1,5 +1,5 @@
 {
-  "displayName": "401 - Guest - Require - App enforced restrictions",
+  "displayName": "501 - Guest - Require - App enforced restrictions",
   "state": "enabledForReportingButNotEnforced",
   "conditions": {
     "clientAppTypes": [

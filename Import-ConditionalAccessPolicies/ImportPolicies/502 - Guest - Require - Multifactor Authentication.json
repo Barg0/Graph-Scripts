@@ -1,5 +1,5 @@
 {
-  "displayName": "402 - Guest - Require - Multifactor Authentication",
+  "displayName": "502 - Guest - Require - Multifactor Authentication",
   "state": "enabledForReportingButNotEnforced",
   "conditions": {
     "clientAppTypes": [
