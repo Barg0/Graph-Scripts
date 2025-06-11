@@ -1,5 +1,5 @@
 {
-  "displayName": "109 - Baseline - Require - Multifactor Authentication for Medium and below Sign-in risk",
+  "displayName": "109 - Baseline - Require - Multifactor Authentication for Medium/Low Sign-in risk",
   "state": "enabledForReportingButNotEnforced",
   "conditions": {
     "clientAppTypes": [
