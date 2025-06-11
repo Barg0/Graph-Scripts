@@ -1,6 +1,6 @@
 {
   "displayName": "303 - User - Require - App protection (Android/iOS)",
-  "state": "enabled",
+  "state": "enabledForReportingButNotEnforced",
   "conditions": {
     "clientAppTypes": [
       "all"
