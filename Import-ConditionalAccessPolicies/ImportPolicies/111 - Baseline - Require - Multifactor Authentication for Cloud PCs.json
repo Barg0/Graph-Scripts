@@ -1,0 +1,52 @@
+{
+  "displayName": "111 - Baseline - Require - Multifactor Authentication for Cloud PCs",
+  "state": "enabledForReportingButNotEnforced",
+  "conditions": {
+    "clientAppTypes": [
+      "all"
+    ],
+    "users": {
+      "includeUsers": [
+        "All"
+      ],
+      "includeGroups": [],
+      "includeRoles": [],
+      "excludeUsers": [
+        "<EmergencyAccessAccount>"
+      ],
+      "excludeGroups": [],
+      "excludeRoles": [],
+      "includeGuestsOrExternalUsers": null,
+      "excludeGuestsOrExternalUsers": null
+    },
+    "applications": {
+      "includeApplications": [
+        "9cdead84-a844-4324-93f2-b2e6bb768d07",
+        "0af06dc6-e4b5-4f28-818e-e78e62d137a5",
+        "270efc09-cd0d-444b-a71f-39af4910ec45"
+      ],
+      "excludeApplications": [],
+      "includeAuthenticationContextClassReferences": [],
+      "applicationFilter": null,
+      "includeUserActions": []
+    },
+    "signInRiskLevels": [],
+    "userRiskLevels": [],
+    "devices": null,
+    "platforms": null,
+    "clientApplications": null,
+    "deviceStates": null,
+    "times": null,
+    "locations": null
+  },
+  "grantControls": {
+    "operator": "OR",
+    "builtInControls": [],
+    "termsOfUse": [],
+    "customAuthenticationFactors": [],
+    "authenticationStrength": {
+      "id": "00000000-0000-0000-0000-000000000002"
+    }
+  },
+  "sessionControls": null
+}
