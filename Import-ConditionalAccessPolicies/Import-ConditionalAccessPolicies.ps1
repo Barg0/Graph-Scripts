@@ -316,6 +316,7 @@ function Test-TemporaryAccessPassAuthStrength {
 $eligibleAdminsGroupId = GetOrCreateGroup -DisplayName "Conditional Access - Eligible admins"
 $azureExclusionsGroupId = GetOrCreateGroup -DisplayName "Conditional Access - Microsoft Azure exclusions"
 $entraServiceAccountsGroupId = GetOrCreateGroup -DisplayName "Conditional Access - Service accounts"
+$entraAppProtectionGroupId = GetOrCreateGroup -DisplayName "Conditional Access - App protection"
 $countriesAllowedId = GetOrCreateCountryNamedLocation -Name "Countries - Allowed" -Countries @("DE", "LU")
 GetOrCreateIpNamedLocation -Name "IP ranges - Company" -IpRanges @("10.10.10.10/32") -IsTrusted
 $temporaryAccessPassId = Test-TemporaryAccessPassAuthStrength
@@ -341,6 +342,7 @@ Get-ChildItem -Path $importDir -Filter *.json | ForEach-Object {
     $json = $json -replace "<CountriesAllowed>", $countriesAllowedId
     $json = $json -replace "<TemporaryAccessPass>", $temporaryAccessPassId
     $json = $json -replace "<ServiceAccountsGroup>", $entraServiceAccountsGroupId
+    $json = $json -replace "<AppProtectionGroup>", $entraAppProtectionGroupId
 
     try {
         Invoke-MgGraphRequest -Method POST -Uri "https://graph.microsoft.com/beta/identity/conditionalAccess/policies" -Body $json -ErrorAction Stop | Out-Null
