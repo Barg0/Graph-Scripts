@@ -1,0 +1,45 @@
+{
+  "displayName": "110 - Baseline - Require - Multifactor Authentication for Medium and below User risk",
+  "state": "enabledForReportingButNotEnforced",
+  "conditions": {
+    "clientAppTypes": [
+      "all"
+    ],
+    "applications": {
+      "includeUserActions": [],
+      "excludeApplications": [],
+      "includeAuthenticationContextClassReferences": [],
+      "includeApplications": [
+        "All"
+      ]
+    },
+    "signInRiskLevels": [],
+    "userRiskLevels": [
+      "medium",
+      "low"
+    ],
+    "users": {
+      "excludeUsers": [
+        "<EmergencyAccessAccount>"
+      ],
+      "includeUsers": [
+        "All"
+      ],
+      "excludeGroups": [],
+      "excludeRoles": [],
+      "includeGroups": [],
+      "includeRoles": []
+    }
+  },
+  "grantControls": {
+    "operator": "OR",
+    "builtInControls": [],
+    "termsOfUse": [],
+    "customAuthenticationFactors": [],
+    "authenticationStrength": {
+      "policyType": "builtIn",
+      "id": "00000000-0000-0000-0000-000000000002"
+    }
+  },
+  "sessionControls": null
+}
