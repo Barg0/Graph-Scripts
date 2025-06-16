@@ -1,4 +1,4 @@
-# Script version:   2025-06-01 12:40
+# Script version:   2025-06-16 19:50
 # Script author:    Barg0
 
 # ---------------------------[ Script Start Timestamp ]---------------------------
@@ -529,7 +529,7 @@ function Publish-AntiPhishPolicy {
 }
 
 function Publish-AntiSpamInboundPolicy {
-    Write-Log "Retrieving Default HostedContentFilterPolicy..." -Tag "Info"
+    # Write-Log "Retrieving Default HostedContentFilterPolicy..." -Tag "Info"
     try {
         $policy = Get-HostedContentFilterPolicy -Identity "Default" -ErrorAction Stop
     } catch {
@@ -545,15 +545,14 @@ function Publish-AntiSpamInboundPolicy {
             -BulkSpamAction "Quarantine" `
             -BulkQuarantineTag "FullAccessPolicy" `
             -SpamAction "Quarantine" `
+            -SpamQuarantineTag "FullAccessPolicy" `
             -HighConfidenceSpamAction "Quarantine" `
             -HighConfidenceSpamQuarantineTag "LimitedAccessPolicy" `
             -PhishSpamAction "Quarantine" `
             -PhishQuarantineTag "LimitedAccessPolicy" `
             -HighConfidencePhishAction "Quarantine" `
             -HighConfidencePhishQuarantineTag "LimitedAccessPolicy" `
-            -EnableViaTag $true `
-            -EnableUnauthenticatedSender $true `
-            -ZapEnabled $true `
+            -IntraOrgFilterState "HighConfidenceSpam" `
             -SpamZapEnabled $true `
             -PhishZapEnabled $true `
             -InlineSafetyTipsEnabled $true `
@@ -568,6 +567,62 @@ function Publish-AntiSpamInboundPolicy {
     }
 }
 
+function Publish-AntiSpamOutboundPolicy {
+    # Write-Log "Retrieving Default Anti Spam Outbound Policy..." -Tag "Info"
+    try {
+        $policy = Get-HostedOutboundSpamFilterPolicy -Identity "Default" -ErrorAction Stop
+    } catch {
+        Write-Log "Error retrieving Default policy: $_" -Tag "Error"
+        return $false
+    }
+
+    Write-Log "Applying outbound filter settings..." -Tag "Info"
+    try {
+        Set-HostedOutboundSpamFilterPolicy -Identity $policy.Identity `
+            -RecipientLimitExternalPerHour "400" `
+            -RecipientLimitInternalPerHour "800" `
+            -RecipientLimitPerDay "800" `
+            -ActionWhenThresholdReached "BlockUser" `
+            -AutoForwardingMode "Off" `
+            -ErrorAction Stop
+
+        Write-Log "Default outbound filter policy configured successfully." -Tag "Success"
+        return $true
+    }
+    catch {
+        Write-Log "Error applying spam filter policy settings: $_" -Tag "Error"
+        return $false
+    }
+}
+
+function Publish-AntiMalwarePolicy {
+    # Write-Log "Retrieving Default Anti Spam Outbound Policy..." -Tag "Info"
+    try {
+        $policy = Get-MalwareFilterPolicy -Identity "Default" -ErrorAction Stop
+    } catch {
+        Write-Log "Error retrieving Default policy: $_" -Tag "Error"
+        return $false
+    }
+
+    # Write-Log "Applying outbound filter settings..." -Tag "Info"
+    try {
+        Set-MalwareFilterPolicy -Identity $policy.Identity `
+            -EnableFileFilter $true `
+            -FileTypeAction "Reject" `
+            -FileTypes @("ace", "ani", "apk", "app", "appx", "arj", "bat", "cab", "cmd", "com", "deb", "dex", "dll", "docm", "elf", "exe", "hta", "img", "iso", "jar", "jnlp", "kext", "lha", "lib", "library", "lnk", "lzh", "macho", "msc", "msi", "msix", "msp", "mst", "pif", "ppa", "ppam", "reg", "rev", "scf", "scr", "sct", "sys", "uif", "vb", "vbe", "vbs", "vxd", "wsc", "wsf", "wsh", "xll", "xz", "z" ) `
+            -QuarantineTag "LimitedAccessPolicy" `
+            -ZapEnabled $true `
+            -ErrorAction Stop
+
+        Write-Log "Default anti-malware policy configured successfully." -Tag "Success"
+        return $true
+    }
+    catch {
+        Write-Log "Error applying anti-malware policy settings: $_" -Tag "Error"
+        return $false
+    }
+}
+
 # ---------------------------[ Execution ]---------------------------
 
 Test-ExchangeOnlineConnection
@@ -577,6 +632,9 @@ $allDomains = Get-AllDomains
 $defenderForOffice = Test-DefenderForOfficeLicense
 Write-Log "Defender for Office: $defenderForOffice" -Tag "Debug"
 Publish-AntiPhishPolicy
+Publish-AntiSpamInboundPolicy
+Publish-AntiSpamOutboundPolicy
+Publish-AntiMalwarePolicy
 # Test-OrganziationCustomization | Out-Null
 # Test-MailboxImportExportRole | Out-Null
 # New-LimitedAccessQuarantinePolicy | Out-Null
