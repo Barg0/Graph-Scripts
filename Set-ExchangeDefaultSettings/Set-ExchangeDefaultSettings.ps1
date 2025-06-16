@@ -9,7 +9,8 @@ $scriptStartTime = Get-Date
 # ---------------------------[ Parameters ]---------------------------
 
 $graphScopes = @(
-    "Domain.Read.All"
+    "Domain.Read.All",
+    "Directory.Read.All"	
 )
 
 # ---------------------------[ Script name ]---------------------------
@@ -195,20 +196,57 @@ function Get-DefaultDomain {
 function Get-AllDomains {
     try {
         $response = Invoke-MgGraphRequest -Method GET -Uri "https://graph.microsoft.com/v1.0/domains"
-
         $allDomains = $response.value
 
-        if ($null -eq $allDomains) {
-            Write-Log "No Domains found." -Tag "Error"
+        if ($null -eq $allDomains -or $allDomains.Count -eq 0) {
+            Write-Log "No domains found in tenant." -Tag "Error"
             return $null
         }
 
-        Write-Log "Domains: $($allDomains.id)" -Tag "Success"
-        return $allDomains.id
+        $domainList = $allDomains | Select-Object -ExpandProperty id
+        Write-Log "Found $($domainList.Count) domains." -Tag "Success"
+
+        return $domainList
     }
     catch {
-        Write-Log "Failed to retrieve default domain: $_" -Tag "Error"
+        Write-Log "Failed to retrieve domains: $_" -Tag "Error"
         return $null
+    }
+}
+
+# ---------------------------[ Licenses ]---------------------------
+
+function Test-DefenderForOfficeLicense {
+    try {
+        $response = Invoke-MgGraphRequest -Method GET -Uri "https://graph.microsoft.com/v1.0/subscribedSkus"
+        $skus = $response.value
+
+        if (-not $skus) {
+            Write-Log "No license SKUs found in tenant." -Tag "Error"
+            return $false
+        }
+
+        # Define Defender for Office 365 service plan IDs
+        $defenderPlanIds = @(
+            "f20fedf3-f3c3-43c3-8267-2bfdd51c0939",  # Plan 1
+            "8e0c0a52-6a6c-4d40-8370-dd62790dcd70"   # Plan 2
+        )
+
+        foreach ($sku in $skus) {
+            foreach ($plan in $sku.servicePlans) {
+                if ($defenderPlanIds -contains $plan.servicePlanId -and $plan.provisioningStatus -eq "Success") {
+                    Write-Log "Defender for Office plan available in SKU: $($sku.skuPartNumber)" -Tag "Success"
+                    return $true
+                }
+            }
+        }
+
+        Write-Log "No Defender for Office plan found in tenant." -Tag "Info"
+        return $false
+    }
+    catch {
+        Write-Log "Error checking for Defender for Office licenses: $_" -Tag "Error"
+        return $false
     }
 }
 
@@ -417,18 +455,134 @@ function Set-GlobalQuarantineNotificationPolicy {
     }
 }
 
+# ---------------------------[ Spam Policies ]---------------------------
+
+function Publish-AntiPhishPolicy {
+    try {
+        $policy = Get-AntiPhishPolicy -Identity "Office365 AntiPhish Default" -ErrorAction Stop
+    }
+    catch {
+        Write-Log "Failed to retrieve default AntiPhish policy: $_" -Tag "Error"
+        return $false
+    }
+
+    # Apply settings with Defender for Office
+    try {
+        if ($defenderForOffice) {
+            Set-AntiPhishPolicy -Identity $policy.Identity `
+                -ImpersonationProtectionState "Manual" `
+                -EnableTargetedUserProtection $true `
+                -EnableTargetedDomainsProtection $true `
+                -EnableOrganizationDomainsProtection $true `
+                -EnableMailboxIntelligence $true `
+                -EnableMailboxIntelligenceProtection $true `
+                -MailboxIntelligenceProtectionAction "Quarantine" `
+                -MailboxIntelligenceQuarantineTag "LimitedAccessPolicy" `
+                -EnableFirstContactSafetyTips $true `
+                -EnableSimilarUsersSafetyTips $true `
+                -EnableSimilarDomainsSafetyTips $true `
+                -EnableUnusualCharactersSafetyTips $true `
+                -TargetedUserProtectionAction "Quarantine" `
+                -TargetedUserQuarantineTag "LimitedAccessPolicy" `
+                -TargetedDomainProtectionAction "Quarantine" `
+                -TargetedDomainQuarantineTag "LimitedAccessPolicy" `
+                -AuthenticationFailAction "Quarantine" `
+                -EnableSpoofIntelligence $true `
+                -SpoofQuarantineTag "LimitedAccessPolicy" `
+                -EnableViaTag $true `
+                -EnableUnauthenticatedSender $true `
+                -HonorDmarcPolicy $true `
+                -DmarcRejectAction "Reject" `
+                -DmarcQuarantineAction "Quarantine" `
+                -PhishThresholdLevel 4 `
+                -ErrorAction Stop
+            }
+        Write-Log "Default AntiPhish policy configured successfully." -Tag "Success"
+        return $true
+    }
+    catch {
+        Write-Log "Error configuring AntiPhish policy: $_" -Tag "Error"
+        return $false
+    }    
+
+    # Apply settings without Defender for Office
+    try {
+        if (!$defenderForOffice) {
+            Set-AntiPhishPolicy -Identity $policy.Identity `
+                -EnableSpoofIntelligence $true `
+                -HonorDmarcPolicy $true `
+                -DmarcQuarantineAction "Quarantine" `
+                -DmarcRejectAction "Reject" `
+                -SpoofQuarantineTag "LimitedAccessPolicy" `
+                -EnableFirstContactSafetyTips $true `
+                -EnableUnauthenticatedSender $true `
+                -EnableViaTag $true `
+                -ErrorAction Stop
+        }
+        Write-Log "Default AntiPhish policy configured successfully." -Tag "Success"
+        return $true
+    }
+    catch {
+        Write-Log "Error configuring AntiPhish policy: $_" -Tag "Error"
+        return $false
+    }
+}
+
+function Publish-AntiSpamInboundPolicy {
+    Write-Log "Retrieving Default HostedContentFilterPolicy..." -Tag "Info"
+    try {
+        $policy = Get-HostedContentFilterPolicy -Identity "Default" -ErrorAction Stop
+    } catch {
+        Write-Log "Error retrieving Default policy: $_" -Tag "Error"
+        return $false
+    }
+
+    Write-Log "Applying spam filter settings..." -Tag "Info"
+    try {
+        Set-HostedContentFilterPolicy -Identity $policy.Identity `
+            -QuarantineRetentionPeriod "30" `
+            -BulkThreshold "5" `
+            -BulkSpamAction "Quarantine" `
+            -BulkQuarantineTag "FullAccessPolicy" `
+            -SpamAction "Quarantine" `
+            -HighConfidenceSpamAction "Quarantine" `
+            -HighConfidenceSpamQuarantineTag "LimitedAccessPolicy" `
+            -PhishSpamAction "Quarantine" `
+            -PhishQuarantineTag "LimitedAccessPolicy" `
+            -HighConfidencePhishAction "Quarantine" `
+            -HighConfidencePhishQuarantineTag "LimitedAccessPolicy" `
+            -EnableViaTag $true `
+            -EnableUnauthenticatedSender $true `
+            -ZapEnabled $true `
+            -SpamZapEnabled $true `
+            -PhishZapEnabled $true `
+            -InlineSafetyTipsEnabled $true `
+            -ErrorAction Stop
+
+        Write-Log "Default spam filter policy configured successfully." -Tag "Success"
+        return $true
+    }
+    catch {
+        Write-Log "Error applying spam filter policy settings: $_" -Tag "Error"
+        return $false
+    }
+}
+
 # ---------------------------[ Execution ]---------------------------
 
 Test-ExchangeOnlineConnection
 Test-MicrosoftGraphConnection
 $defaultDomain = Get-DefaultDomain
-Get-AllDomains
-Test-OrganziationCustomization | Out-Null
-Test-MailboxImportExportRole | Out-Null
-New-LimitedAccessQuarantinePolicy | Out-Null
-New-FullAccessQuarantinePolicy | Out-Null
-$sharedMailboxMicrosoftDefender = New-SharedMailbox -DisplayName "Microsoft Defender" -MailAlias "microsoft-defender" -Language "de-DE" -VisibleInGal $false
-Set-GlobalQuarantineNotificationPolicy -SenderAddress $sharedMailboxMicrosoftDefender -Language "German" | Out-Null
+$allDomains = Get-AllDomains
+$defenderForOffice = Test-DefenderForOfficeLicense
+Write-Log "Defender for Office: $defenderForOffice" -Tag "Debug"
+Publish-AntiPhishPolicy
+# Test-OrganziationCustomization | Out-Null
+# Test-MailboxImportExportRole | Out-Null
+# New-LimitedAccessQuarantinePolicy | Out-Null
+# New-FullAccessQuarantinePolicy | Out-Null
+# $sharedMailboxMicrosoftDefender = New-SharedMailbox -DisplayName "Microsoft Defender" -MailAlias "microsoft-defender" -Language "de-DE" -VisibleInGal $false
+# Set-GlobalQuarantineNotificationPolicy -SenderAddress $sharedMailboxMicrosoftDefender -Language "German" | Out-Null
 
 # ---------------------------[ End ]---------------------------
 
