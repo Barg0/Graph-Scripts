@@ -6,7 +6,8 @@ $scriptStartTime = Get-Date
 # ---------------------------[ Parameters ]---------------------------
 
 $graphScopes = @(
-    "DeviceManagementConfiguration.Read.All",
+    "DeviceManagementConfiguration.Read.All"
+    "DeviceManagementConfiguration.ReadWrite.All",
     "Directory.Read.All"
 )
 $uri = "https://graph.microsoft.com/beta/deviceManagement/deviceConfigurations"
