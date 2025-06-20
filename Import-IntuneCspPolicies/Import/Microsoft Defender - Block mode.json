@@ -1,0 +1,13 @@
+{
+  "displayName": "Microsoft Defender - Block mode",
+  "description": null,
+  "omaSettings": [
+    {
+      "displayName": "BlockMode",
+      "description": "2 = Audit | 4 = Active",
+      "omaUri": "./Device/Vendor/MSFT/Defender/Configuration/PassiveRemediation",
+      "value": 2,
+      "odataType": "#microsoft.graph.omaSettingInteger"
+    }
+  ]
+}
