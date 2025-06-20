@@ -43,6 +43,13 @@
       "omaUri": "./Vendor/MSFT/SharedPC/SetEduPolicies",
       "value": false,
       "odataType": "#microsoft.graph.omaSettingBoolean"
+    },
+    {
+      "displayName": "UserAccountControl_BehaviorOfTheElevationPromptForStandardUsers",
+      "description": null,
+      "omaUri": "./Device/Vendor/MSFT/Policy/Config/LocalPoliciesSecurityOptions/UserAccountControl_BehaviorOfTheElevationPromptForStandardUsers",
+      "value": 1,
+      "odataType": "#microsoft.graph.omaSettingInteger"
     }
   ]
 }
