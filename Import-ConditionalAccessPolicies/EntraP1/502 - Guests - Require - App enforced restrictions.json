@@ -1,0 +1,56 @@
+{
+  "displayName": "502 - Guests - Require - App enforced restrictions",
+  "state": "enabledForReportingButNotEnforced",
+  "conditions": {
+    "clientAppTypes": [
+      "browser"
+    ],
+    "platforms": null,
+    "locations": null,
+    "applications": {
+      "includeApplications": [
+        "Office365"
+      ],
+      "excludeApplications": [],
+      "includeAuthenticationContextClassReferences": [],
+      "includeUserActions": [],
+      "applicationFilter": null
+    },
+    "users": {
+      "includeGuestsOrExternalUsers": {
+        "externalTenants": {
+          "@odata.type": "#microsoft.graph.conditionalAccessAllExternalTenants",
+          "membershipKind": "all"
+        },
+        "guestOrExternalUserTypes": "internalGuest,b2bCollaborationGuest,b2bCollaborationMember,b2bDirectConnectUser,otherExternalUser,serviceProvider"
+      },
+      "includeUsers": [],
+      "excludeUsers": [
+        "<EmergencyAccessAccount>"
+      ],
+      "excludeGroups": [],
+      "excludeRoles": [],
+      "includeGroups": [],
+      "includeRoles": [],
+      "excludeGuestsOrExternalUsers": null
+    },
+    "clientApplications": null,
+    "signInRiskLevels": [],
+    "userRiskLevels": [],
+    "deviceStates": null,
+    "devices": null,
+    "times": null
+  },
+  "grantControls": null,
+  "sessionControls": {
+    "applicationEnforcedRestrictions": {
+      "isEnabled": true
+    },
+    "continuousAccessEvaluation": null,
+    "signInFrequency": null,
+    "secureSignInSession": null,
+    "disableResilienceDefaults": null,
+    "cloudAppSecurity": null,
+    "persistentBrowser": null
+  }
+}

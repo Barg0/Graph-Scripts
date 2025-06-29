@@ -1,0 +1,63 @@
+{
+  "displayName": "501 - Guests - Block - Countries except Whitelist/Guests",
+  "state": "enabledForReportingButNotEnforced",
+  "conditions": {
+    "clientAppTypes": [
+      "all"
+    ],
+    "users": {
+      "includeUsers": [],
+      "excludeUsers": [
+        "<EmergencyAccessAccount>"
+      ],
+      "excludeRoles": [],
+      "excludeGroups": [],
+      "includeGroups": [],
+      "includeRoles": [],
+      "includeGuestsOrExternalUsers": {
+        "guestOrExternalUserTypes": "internalGuest,b2bCollaborationGuest,b2bCollaborationMember,b2bDirectConnectUser,otherExternalUser,serviceProvider",
+        "externalTenants": {
+          "@odata.type": "#microsoft.graph.conditionalAccessAllExternalTenants",
+          "membershipKind": "all"
+        }
+      },
+      "excludeGuestsOrExternalUsers": null
+    },
+    "applications": {
+      "includeApplications": [
+        "All"
+      ],
+      "excludeApplications": [],
+      "applicationFilter": null,
+      "includeAuthenticationContextClassReferences": [],
+      "includeUserActions": []
+    },
+    "locations": {
+      "includeLocations": [
+        "All"
+      ],
+      "excludeLocations": [
+        "<CountriesWhitelist>",
+        "<CountriesGuests>"
+      ]
+    },
+    "platforms": null,
+    "devices": null,
+    "deviceStates": null,
+    "signInRiskLevels": [],
+    "userRiskLevels": [],
+    "times": null,
+    "clientApplications": null
+  },
+  "grantControls": {
+    "operator": "OR",
+    "builtInControls": [
+      "block"
+    ],
+    "termsOfUse": [],
+    "customAuthenticationFactors": [],
+    "authenticationStrength": null
+  },
+  "sessionControls": null,
+  "partialEnablementStrategy": null
+}

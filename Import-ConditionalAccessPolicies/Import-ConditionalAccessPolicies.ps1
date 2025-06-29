@@ -18,8 +18,6 @@ $graphScopes = @(
 $scriptName = "Import-ConditionalAccessPolicies"
 $logFileName = "$($scriptName).log"
 
-$importDir = Join-Path -Path $PSScriptRoot -ChildPath "ImportPolicies"
-
 $scriptStartTime = Get-Date
 
 # ---------------------------[ Logging Control ]---------------------------
@@ -149,6 +147,29 @@ if (-not $connected) {
     }
 }
 
+# ---------------------------[ Prompt Entra P1/P2 Selection ]---------------------------
+
+$validLicenseSelected = $false
+while (-not $validLicenseSelected) {
+    $entraLicense = Read-Host "Which Entra License do you have? Enter '1' for Entra P1 (E3/Business Premium) or '2' for Entra P2 (E5)"
+
+    switch ($entraLicense) {
+        "1" {
+            Write-Log "Selected Entra P1 (E3 / Business Premium)" -Tag "Info"
+            $entraLicense = "P1"
+            $validLicenseSelected = $true
+        }
+        "2" {
+            Write-Log "Selected Entra P2 (E5)" -Tag "Info"
+            $entraLicense = "P2"
+            $validLicenseSelected = $true
+        }
+        default {
+            Write-Log "Invalid selection. Please enter '1' for P1 or '2' for P2." -Tag "Error"
+        }
+    }
+}
+
 # ---------------------------[ Prompt for Emergency Access UPN ]---------------------------
 
 $emergencyUpn = Read-Host "Enter the UPN of the emergency access account"
@@ -163,7 +184,7 @@ try {
 
 # ---------------------------[ Helpers for object creation ]---------------------------
 
-function GetOrCreateGroup {
+function New-Group {
     param([string]$DisplayName)
 
     $group = Get-MgGroup -Filter "displayName eq '$DisplayName'" -ConsistencyLevel eventual -CountVariable count
@@ -209,7 +230,30 @@ function GetOrCreateCountryNamedLocation {
     return $location.id
 }
 
-function GetOrCreateIpNamedLocation {
+function New-CountryNamedLocation {
+    param ([string]$Name, [string[]]$Countries)
+
+    $existing = (Invoke-MgGraphRequest -Method GET -Uri "https://graph.microsoft.com/beta/identity/conditionalAccess/namedLocations").value |
+        Where-Object { $_.displayName -eq $Name -and $_.'@odata.type' -eq '#microsoft.graph.countryNamedLocation' }
+
+    if ($existing) {
+        Write-Log "Named location '$Name' already exists with ID: $($existing.id)" -Tag "Info"
+        return $existing.id
+    }
+
+    $body = @{
+        "@odata.type" = "#microsoft.graph.countryNamedLocation"
+        displayName = $Name
+        countriesAndRegions = $Countries
+        includeUnknownCountriesAndRegions = $false
+    }
+
+    $location = Invoke-MgGraphRequest -Method POST -Uri "https://graph.microsoft.com/beta/identity/conditionalAccess/namedLocations" -Body ($body | ConvertTo-Json -Depth 3)
+    Write-Log "Named location '$Name' created with ID: $($location.id)" -Tag "Success"
+    return $location.id
+}
+
+function New-IpNamedLocation {
     param (
         [string]$Name,
         [string[]]$IpRanges,
@@ -313,14 +357,30 @@ function Test-TemporaryAccessPassAuthStrength {
 }
 # ---------------------------[ Object Creation ]---------------------------
 
-$eligibleAdminsGroupId = GetOrCreateGroup -DisplayName "Conditional Access - Eligible admins"
-$azureExclusionsGroupId = GetOrCreateGroup -DisplayName "Conditional Access - Microsoft Azure exclusions"
-$entraServiceAccountsGroupId = GetOrCreateGroup -DisplayName "Conditional Access - Service accounts"
-$entraAppProtectionGroupId = GetOrCreateGroup -DisplayName "Conditional Access - App protection"
-$countriesAllowedId = GetOrCreateCountryNamedLocation -Name "Countries - Allowed" -Countries @("DE", "LU")
-GetOrCreateIpNamedLocation -Name "IP ranges - Company" -IpRanges @("10.10.10.10/32") -IsTrusted
+$azureExclusionsGroupId = New-Group -DisplayName "Conditional Access - Microsoft Azure exclusions"
+$entraServiceAccountsGroupId = New-Group -DisplayName "Conditional Access - Service accounts"
+$entraAppProtectionGroupId = New-Group -DisplayName "Conditional Access - App protection"
+$travelGroupId = New-Group -DisplayName "Conditional Access - Travel"
+$countriesWhitelistId = New-CountryNamedLocation -Name "Countries - Whitelist" -Countries @("DE", "LU")
+$countriesTravelId = New-CountryNamedLocation -Name "Countries - Travel" -Countries @("DE")
+$countriesGuestsId = New-CountryNamedLocation -Name "Countries - Guests" -Countries @("DE")
+New-IpNamedLocation -Name "IP ranges - Company" -IpRanges @("10.10.10.10/32") -IsTrusted
 $temporaryAccessPassId = Test-TemporaryAccessPassAuthStrength
-Test-AuthenticationContext
+
+if ($entraLicense -eq "P2")
+{
+    $eligibleAdminsGroupId = New-Group -DisplayName "Conditional Access - Eligible admins"
+    Test-AuthenticationContext
+} else {
+}
+
+if ($entraLicense -eq "P1") {
+    $importDir = Join-Path -Path $PSScriptRoot -ChildPath "EntraP1"
+    Write-Log "Policy Folder: $importDir" -Tag "Info"
+} elseif ($entraLicense -eq "P2") {
+    $importDir = Join-Path -Path $PSScriptRoot -ChildPath "EntraP2"
+    Write-Log "Policy Folder: $importDir" -Tag "Info"
+}
 
 # ---------------------------[ Import Policies ]---------------------------
 
@@ -339,10 +399,13 @@ Get-ChildItem -Path $importDir -Filter *.json | ForEach-Object {
     $json = $json -replace "<EmergencyAccessAccount>", $emergencyAccessAccountId
     $json = $json -replace "<EligibleAdminsGroup>", $eligibleAdminsGroupId
     $json = $json -replace "<MicrosoftAzureExclusions>", $azureExclusionsGroupId
-    $json = $json -replace "<CountriesAllowed>", $countriesAllowedId
+    $json = $json -replace "<CountriesWhitelist>", $countriesWhitelistId
+    $json = $json -replace "<CountriesTravel>", $countriesTravelId
+    $json = $json -replace "<CountriesGuests>", $countriesGuestsId
     $json = $json -replace "<TemporaryAccessPass>", $temporaryAccessPassId
     $json = $json -replace "<ServiceAccountsGroup>", $entraServiceAccountsGroupId
     $json = $json -replace "<AppProtectionGroup>", $entraAppProtectionGroupId
+    $json = $json -replace "<TravelGroup>", $travelGroupId
 
     try {
         Invoke-MgGraphRequest -Method POST -Uri "https://graph.microsoft.com/beta/identity/conditionalAccess/policies" -Body $json -ErrorAction Stop | Out-Null
