@@ -8,7 +8,7 @@ Windows - Azure Virtual Desktop,"(device.deviceOSType -eq ""Windows"") and (devi
 Windows Autopilot - All,"(device.devicePhysicalIDs -any (_ -startsWith ""[ZTDid]""))",All devices registered with Windows Autopilot (ZTD ID present).
 Windows Autopilot - Workstations,"(device.devicePhysicalIds -any (_ -eq ""[OrderID]:WS""))",Windows Autopilot devices ordered as workstations (OrderID:WS).
 Windows Autopilot - Notebook,"(device.devicePhysicalIds -any (_ -eq ""[OrderID]:NB""))",Windows Autopilot devices ordered as notebooks (OrderID:NB).
-Windows Autopilot - Tablets,"(device.devicePhysicalIds -any (_ -eq ""[OrderID]:WS""))",Windows Autopilot devices ordered as tablets (OrderID:WS).
+Windows Autopilot - Tablets,"(device.devicePhysicalIds -any (_ -eq ""[OrderID]:WS""))",Windows Autopilot devices ordered as tablets (OrderID:TB).
 Windows Autopilot - Workstations - Multi-user,"(device.devicePhysicalIds -any (_ -eq ""[OrderID]:WS-MU""))",Multi-user workstations provisioned through Windows Autopilot (OrderID:WS-MU).
 Windows Autopilot - Notebooks - Multi-user,"(device.devicePhysicalIds -any (_ -eq ""[OrderID]:NB-MU""))",Multi-user notebooks provisioned through Windows Autopilot (OrderID:NB-MU).
 Windows Autopilot - Tablets - Multi-user,"(device.devicePhysicalIds -any (_ -eq ""[OrderID]:TB-MU""))",Multi-user tablets provisioned through Windows Autopilot (OrderID:TB-MU).
