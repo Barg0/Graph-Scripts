@@ -1,0 +1,14 @@
+{
+  "createdDateTime": "2025-07-19T06:58:26.1175697Z",
+  "lastModifiedDateTime": "2025-07-19T06:58:26.1175697Z",
+  "assignmentFilterManagementType": "devices",
+  "id": "041da94c-b35a-49e1-9595-ee22077f8e76",
+  "payloads": [],
+  "displayName": "Windows - x64",
+  "rule": "(device.cpuArchitecture -eq \"amd64\")",
+  "platform": "windows10AndLater",
+  "description": "",
+  "roleScopeTags": [
+    "0"
+  ]
+}
