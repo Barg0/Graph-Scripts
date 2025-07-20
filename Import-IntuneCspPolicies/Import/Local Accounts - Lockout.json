@@ -1,0 +1,13 @@
+{
+  "displayName": "Local Accounts - Lockout",
+  "description": null,
+  "omaSettings": [
+    {
+      "displayName": "AccountLockoutPolicy",
+      "description": null,
+      "omaUri": "./Device/Vendor/MSFT/Policy/Config/DeviceLock/AccountLockoutPolicy",
+      "value": "PGEvPg==",
+      "odataType": "#microsoft.graph.omaSettingStringXml"
+    }
+  ]
+}
