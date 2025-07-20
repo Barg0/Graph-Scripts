@@ -1,0 +1,19 @@
+<SyncML xmlns="SYNCML:SYNCML1.1">
+  <SyncBody>
+    <Replace>
+      <CmdID>1</CmdID>
+      <Item>
+        <Target>
+          <LocURI>./Device/Vendor/MSFT/Policy/Config/DeviceLock/AccountLockoutPolicy</LocURI>
+        </Target>
+        <Meta>
+          <Format xmlns="syncml:metinf">chr</Format>
+        </Meta>
+        <Data>
+          <![CDATA[{"AccountLockoutThreshold":5,"AccountLockoutDuration":15,"ResetAccountLockoutCounterAfter":15}]]>
+        </Data>
+      </Item>
+    </Replace>
+    <Final/>
+  </SyncBody>
+</SyncML>
