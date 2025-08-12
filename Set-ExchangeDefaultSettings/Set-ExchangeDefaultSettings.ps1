@@ -631,17 +631,18 @@ $defaultDomain = Get-DefaultDomain
 $allDomains = Get-AllDomains
 $defenderForOffice = Test-DefenderForOfficeLicense
 Write-Log "Defender for Office: $defenderForOffice" -Tag "Debug"
+Test-OrganziationCustomization | Out-Null
+Test-MailboxImportExportRole | Out-Null
+$sharedMailboxMicrosoftDefender = New-SharedMailbox -DisplayName "Microsoft Defender" -MailAlias "microsoft-defender" -Language "de-DE" -VisibleInGal $false
+New-LimitedAccessQuarantinePolicy | Out-Null
+New-FullAccessQuarantinePolicy | Out-Null
+# Set-GlobalQuarantineNotificationPolicy -SenderAddress $sharedMailboxMicrosoftDefender -Language "German" | Out-Null
 Publish-AntiPhishPolicy
 Publish-AntiSpamInboundPolicy
 Publish-AntiSpamOutboundPolicy
 Publish-AntiMalwarePolicy
-# Test-OrganziationCustomization | Out-Null
-# Test-MailboxImportExportRole | Out-Null
-# New-LimitedAccessQuarantinePolicy | Out-Null
-# New-FullAccessQuarantinePolicy | Out-Null
-# $sharedMailboxMicrosoftDefender = New-SharedMailbox -DisplayName "Microsoft Defender" -MailAlias "microsoft-defender" -Language "de-DE" -VisibleInGal $false
-# Set-GlobalQuarantineNotificationPolicy -SenderAddress $sharedMailboxMicrosoftDefender -Language "German" | Out-Null
 
 # ---------------------------[ End ]---------------------------
+
 
 Complete-Script -ExitCode 0
