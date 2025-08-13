@@ -10,6 +10,7 @@ $scriptStartTime = Get-Date
 $graphScopes = @(
     "Application.Read.All",
     "Policy.Read.All",
+    "Group.ReadWrite.All",    
     "Policy.ReadWrite.ConditionalAccess",
     "Directory.Read.All",
     "User.Read.All"
@@ -414,5 +415,6 @@ Get-ChildItem -Path $importDir -Filter *.json | ForEach-Object {
         Write-Log "Failed to import policy '$($file)': $_" -Tag "Error"
     }
 }
+
 
 Complete-Script -ExitCode 0
