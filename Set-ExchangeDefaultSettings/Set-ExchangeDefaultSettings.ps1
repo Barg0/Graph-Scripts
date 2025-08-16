@@ -433,10 +433,11 @@ function Set-GlobalQuarantineNotificationPolicy {
         [string]$Language
     )
 
-    try {
+    function Invoke-SetPolicy {
+        param($SenderAddress, $Language)
         $globalPolicy = Get-QuarantinePolicy -QuarantinePolicyType GlobalQuarantinePolicy -ErrorAction Stop
 
-        Set-QuarantinePolicy -Identity $globalPolicy.Identity `
+        $globalPolicy | Set-QuarantinePolicy `
             -MultiLanguageCustomDisclaimer @("") `
             -MultiLanguageSenderName @("") `
             -EsnCustomSubject @("") `
@@ -444,14 +445,39 @@ function Set-GlobalQuarantineNotificationPolicy {
             -EndUserSpamNotificationCustomFromAddress $SenderAddress `
             -OrganizationBrandingEnabled $true `
             -EndUserSpamNotificationFrequency "04:00:00" `
+            -ESNEnabled $true `
             -ErrorAction Stop
+    }
 
+    try {
+        Invoke-SetPolicy -SenderAddress $SenderAddress -Language $Language
         Write-Log "Global quarantine notification policy updated successfully." -Tag "Success"
         return $true
     }
     catch {
-        Write-Log "Failed to update global quarantine notification policy: $_" -Tag "Error"
-        return $false
+        if ($_.Exception.Message -like "*couldn't be found*") {
+            Write-Log "Global quarantine policy not provisioned. Please open Microsoft 365 Security portal once (Quarantine > Save) to initialize." -Tag "Info"
+            $choice = Read-Host "Press 'Y' once you've initialized it in the portal to retry, or any other key to skip"
+            if ($choice -eq "Y" -or $choice -eq "y") {
+                try {
+                    Invoke-SetPolicy -SenderAddress $SenderAddress -Language $Language
+                    Write-Log "Global quarantine notification policy updated successfully (after retry)." -Tag "Success"
+                    return $true
+                }
+                catch {
+                    Write-Log "Retry failed: $($_.Exception.Message)" -Tag "Error"
+                    return $false
+                }
+            }
+            else {
+                Write-Log "Skipping Global Quarantine Notification Policy configuration." -Tag "Info"
+                return $false
+            }
+        }
+        else {
+            Write-Log "Failed to update global quarantine notification policy: $($_.Exception.Message)" -Tag "Error"
+            return $false
+        }
     }
 }
 
@@ -623,6 +649,459 @@ function Publish-AntiMalwarePolicy {
     }
 }
 
+# ---------------------------[ Safe Attachments (Policy + Rule) ]---------------------------
+
+function Publish-SafeAttachmentsPolicy {
+    param(
+        [Parameter(Mandatory = $true)][string[]]$RecipientDomains,
+        [Parameter(Mandatory = $true)][bool]$HasDefenderForOffice
+    )
+
+    if (-not $HasDefenderForOffice) {
+        Write-Log "Skipping Safe Attachments: Defender for Office 365 license not detected." -Tag "Info"
+        return $false
+    }
+
+    if ($null -eq $RecipientDomains -or $RecipientDomains.Count -eq 0) {
+        Write-Log "Skipping Safe Attachments: no recipient domains found." -Tag "Error"
+        return $false
+    }
+
+    $policyName = "Default"
+    $ruleName   = "Default"
+
+    try {
+        # Ensure policy exists
+        $policy = Get-SafeAttachmentPolicy -ErrorAction SilentlyContinue | Where-Object { $_.Name -eq $policyName }
+        if (-not $policy) {
+            Write-Log "Creating Safe Attachments policy '$policyName'..." -Tag "Info"
+            New-SafeAttachmentPolicy -Name $policyName -ErrorAction Stop | Out-Null
+        }
+
+        # Configure policy per spec
+        Write-Log "Configuring Safe Attachments policy '$policyName'..." -Tag "Info"
+        Set-SafeAttachmentPolicy -Identity $policyName `
+            -Enable $true `
+            -Action Block `
+            -QuarantineTag "LimitedAccessPolicy" `
+            -Redirect $false `
+            -ErrorAction Stop
+
+        # Ensure rule exists + scope to all domains
+        $rule = Get-SafeAttachmentRule -ErrorAction SilentlyContinue | Where-Object { $_.Name -eq $ruleName }
+        if (-not $rule) {
+            Write-Log "Creating Safe Attachments rule '$ruleName'..." -Tag "Info"
+            New-SafeAttachmentRule -Name $ruleName -SafeAttachmentPolicy $policyName -RecipientDomainIs $RecipientDomains -Enabled $true -ErrorAction Stop | Out-Null
+        } else {
+            Write-Log "Updating Safe Attachments rule '$ruleName' (domains + enable)..." -Tag "Info"
+            Set-SafeAttachmentRule -Identity $ruleName -RecipientDomainIs $RecipientDomains -Enabled $true -ErrorAction Stop | Out-Null
+        }
+
+        Write-Log "Safe Attachments 'Default' policy and rule are configured." -Tag "Success"
+        return $true
+    }
+    catch {
+        Write-Log "Error configuring Safe Attachments: $($_.Exception.Message)" -Tag "Error"
+        return $false
+    }
+}
+
+# ---------------------------[ Safe Links (Policy + Rule) ]---------------------------
+
+function Publish-SafeLinksPolicy {
+    param(
+        [Parameter(Mandatory = $true)][string[]]$RecipientDomains,
+        [Parameter(Mandatory = $true)][bool]$HasDefenderForOffice
+    )
+
+    if (-not $HasDefenderForOffice) {
+        Write-Log "Skipping Safe Links: Defender for Office 365 license not detected." -Tag "Info"
+        return $false
+    }
+
+    if ($null -eq $RecipientDomains -or $RecipientDomains.Count -eq 0) {
+        Write-Log "Skipping Safe Links: no recipient domains found." -Tag "Error"
+        return $false
+    }
+
+    $policyName = "Default"
+    $ruleName   = "Default"
+
+    try {
+        # Ensure policy exists
+        $policy = Get-SafeLinksPolicy -ErrorAction SilentlyContinue | Where-Object { $_.Name -eq $policyName }
+        if (-not $policy) {
+            Write-Log "Creating Safe Links policy '$policyName'..." -Tag "Info"
+            New-SafeLinksPolicy -Name $policyName -ErrorAction Stop | Out-Null
+        }
+
+        # Map GUI toggles to cmdlet params
+        # Email: On                                 -> -EnableSafeLinksForEmail $true
+        # Internal mail: On                         -> -EnableForInternalSenders $true
+        # Real-time URL scan: On                    -> -ScanUrls $true
+        # Wait for scan before delivery: On         -> -DeliverMessageAfterScan $true
+        # "API-only (no rewrite)": Off              -> -DisableUrlRewrite $false
+        # Do not rewrite list = empty               -> -DoNotRewriteUrls @()
+        # Teams: On                                 -> -EnableSafeLinksForTeams $true
+        # Office apps: On                           -> -EnableSafeLinksForOffice $true
+        # Track clicks: On                          -> -TrackClicks $true
+        # Allow click-through: Off                  -> -AllowClickThrough $false
+        # Branding on warning pages: On             -> -EnableOrganizationBranding $true
+
+        Write-Log "Configuring Safe Links policy '$policyName'..." -Tag "Info"
+        try {
+            Set-SafeLinksPolicy -Identity $policyName `
+                -EnableSafeLinksForEmail $true `
+                -EnableForInternalSenders $true `
+                -ScanUrls $true `
+                -DeliverMessageAfterScan $true `
+                -DisableUrlRewrite $false `
+                -DoNotRewriteUrls @() `
+                -EnableSafeLinksForTeams $true `
+                -EnableSafeLinksForOffice $true `
+                -TrackClicks $true `
+                -AllowClickThrough $false `
+                -EnableOrganizationBranding $true `
+                -ErrorAction Stop
+        } catch {
+            # Some tenants/cmdlet versions can be picky about clearing DoNotRewriteUrls – log and retry without it.
+            Write-Log "Primary Safe Links set failed (DoNotRewriteUrls). Retrying without clearing list. $_" -Tag "Debug"
+            Set-SafeLinksPolicy -Identity $policyName `
+                -EnableSafeLinksForEmail $true `
+                -EnableForInternalSenders $true `
+                -ScanUrls $true `
+                -DeliverMessageAfterScan $true `
+                -DisableUrlRewrite $false `
+                -EnableSafeLinksForTeams $true `
+                -EnableSafeLinksForOffice $true `
+                -TrackClicks $true `
+                -AllowClickThrough $false `
+                -EnableOrganizationBranding $true `
+                -ErrorAction Stop
+        }
+
+        # Ensure rule exists + scope to all domains
+        $rule = Get-SafeLinksRule -ErrorAction SilentlyContinue | Where-Object { $_.Name -eq $ruleName }
+        if (-not $rule) {
+            Write-Log "Creating Safe Links rule '$ruleName'..." -Tag "Info"
+            New-SafeLinksRule -Name $ruleName -SafeLinksPolicy $policyName -RecipientDomainIs $RecipientDomains -Enabled $true -ErrorAction Stop | Out-Null
+        } else {
+            Write-Log "Updating Safe Links rule '$ruleName' (domains + enable)..." -Tag "Info"
+            Set-SafeLinksRule -Identity $ruleName -RecipientDomainIs $RecipientDomains -Enabled $true -ErrorAction Stop | Out-Null
+        }
+
+        Write-Log "Safe Links 'Default' policy and rule are configured." -Tag "Success"
+        return $true
+    }
+    catch {
+        Write-Log "Error configuring Safe Links: $($_.Exception.Message)" -Tag "Error"
+        return $false
+    }
+}
+
+# ---------------------------[ Best Practice ]---------------------------
+
+function Set-ExternalOutlook {
+    $config = Get-ExternalInOutlook
+    if ($config.Enabled -eq $true) {
+        Write-Log "ExternalInOutlook already enabled." -Tag "Info"
+    } else {
+        Set-ExternalInOutlook -Enabled $true
+        Write-Log "ExternalInOutlook enabled." -Tag "Success"
+    }
+}
+
+function Set-MailTipsConfig {
+    $cfg = Get-OrganizationConfig
+    if ($cfg.MailTipsAllTipsEnabled -and 
+        $cfg.MailTipsExternalRecipientsTipsEnabled -and 
+        $cfg.MailTipsGroupMetricsEnabled -and 
+        $cfg.MailTipsLargeAudienceThreshold -eq 25) {
+        Write-Log "MailTips configuration already correct." -Tag "Info"
+    } else {
+        Set-OrganizationConfig -MailTipsAllTipsEnabled $true `
+                               -MailTipsExternalRecipientsTipsEnabled $true `
+                               -MailTipsGroupMetricsEnabled $true `
+                               -MailTipsLargeAudienceThreshold 25
+        Write-Log "MailTips configuration corrected." -Tag "Success"
+    }
+}
+
+function Set-AuditDisabled {
+    $cfg = Get-OrganizationConfig
+    if ($cfg.AuditDisabled -eq $false) {
+        Write-Log "AuditDisabled already false." -Tag "Info"
+    } else {
+        Set-OrganizationConfig -AuditDisabled $false
+        Write-Log "AuditDisabled set to false." -Tag "Success"
+    }
+}
+
+function Set-MailboxAuditing {
+    $mailboxes = Get-Mailbox -ResultSize Unlimited | Where-Object { $_.AuditEnabled -ne $true }
+    if ($null -eq $mailboxes) {
+        Write-Log "All mailboxes already have auditing enabled." -Tag "Info"
+    } else {
+        foreach ($mb in $mailboxes) {
+            Set-Mailbox -Identity $mb.Identity -AuditEnabled $true
+            Write-Log "Audit enabled for mailbox: $($mb.DisplayName)" -Tag "Success"
+        }
+    }
+}
+
+function Set-OwaPolicy {
+    $owa = Get-OwaMailboxPolicy -Identity "OwaMailboxPolicy-Default"
+    if ($owa.AdditionalStorageProvidersAvailable -eq $false) {
+        Write-Log "OwaMailboxPolicy already correct." -Tag "Info"
+    } else {
+        Set-OwaMailboxPolicy -Identity "OwaMailboxPolicy-Default" -AdditionalStorageProvidersAvailable $false
+        Write-Log "OwaMailboxPolicy corrected." -Tag "Success"
+    }
+}
+
+function Set-DefaultRoleAssignmentPolicy {
+    $defaultPolicy = Get-RoleAssignmentPolicy | Where-Object { $_.IsDefault -eq $true }
+    $rolesToRemove = @("My Custom Apps", "My Marketplace Apps", "My ReadWriteMailbox Apps")
+    $assignedRoles = Get-ManagementRoleAssignment -RoleAssignee $defaultPolicy.Identity
+
+    foreach ($role in $rolesToRemove) {
+        if ($assignedRoles.Role -contains $role) {
+            $assignment = $assignedRoles | Where-Object { $_.Role -eq $role }
+            Remove-ManagementRoleAssignment -Identity $assignment.Identity -Confirm:$false
+            Write-Log "$role removed from Default Role Assignment Policy." -Tag "Success"
+        } else {
+            Write-Log "$role not assigned (already correct)." -Tag "Info"
+        }
+    }
+}
+
+# ---------------------------[ Audit ]---------------------------
+
+function Enable-UnifiedAuditLog {
+    try {
+        $status = (Get-AdminAuditLogConfig -ErrorAction Stop).UnifiedAuditLogIngestionEnabled
+
+        if ($status -eq $true) {
+            Write-Log "Unified Audit Log is already enabled." -Tag "Info"
+        } elseif ($status -eq $false) {
+            Write-Log "Unified Audit Log is not enabled. Enabling now..." -Tag "Info"
+            Set-AdminAuditLogConfig -UnifiedAuditLogIngestionEnabled $true -ErrorAction Stop
+            Write-Log "Unified Audit Log enable command issued successfully. It may take up to 60 minutes to take effect." -Tag "Success"
+        } else {
+            Write-Log "Could not determine Unified Audit Log status (value: $status)." -Tag "Error"
+        }
+    }
+    catch {
+        Write-Log "Failed to check or enable Unified Audit Log: $($_.Exception.Message)" -Tag "Error"
+    }
+}
+
+# ---------------------------[ Focused Inbox ]---------------------------
+
+function Disable-FocusedInboxGlobal {
+    try {
+        $config = Get-OrganizationConfig -ErrorAction Stop
+        if ($config.FocusedInboxOn -eq $false) {
+            Write-Log "Focused Inbox is already disabled globally." -Tag "Info"
+        } else {
+            Set-OrganizationConfig -FocusedInboxOn $false -ErrorAction Stop
+            Write-Log "Focused Inbox has been disabled globally." -Tag "Success"
+        }
+    }
+    catch {
+        Write-Log "Failed to configure Focused Inbox globally: $($_.Exception.Message)" -Tag "Error"
+    }
+}
+
+# ---------------------------[ Focused Inbox ]---------------------------
+
+function Set-AIPService {
+    try {
+        # ---- 1) License gate (Graph) ----
+        $resp = Invoke-MgGraphRequest -Method GET -Uri "https://graph.microsoft.com/v1.0/subscribedSkus" -ErrorAction Stop
+        $skus = $resp.value
+        if (-not $skus) {
+            Write-Log "No subscribed SKUs returned by Graph; skipping AIP." -Tag "Info"
+            return $false
+        }
+
+        # AIP/MIP/RMS-capable plans that must show provisioningStatus=Success
+        $validPlanNames = @('RMS_S_ENTERPRISE','RMS_S_PREMIUM','RMS_S_PREMIUM2','MIP_S_CLP1','MIP_S_CLP2')
+        $hasAipPlan = $false
+        foreach ($sku in $skus) {
+            foreach ($plan in ($sku.servicePlans | Where-Object { $_.provisioningStatus -eq 'Success' })) {
+                if ($validPlanNames -contains $plan.servicePlanName) {
+                    Write-Log "Detected AIP/RMS-capable plan: $($plan.servicePlanName) in SKU $($sku.skuPartNumber)." -Tag "Info"
+                    $hasAipPlan = $true; break
+                }
+            }
+            if ($hasAipPlan) { break }
+        }
+        if (-not $hasAipPlan) {
+            Write-Log "No AIP/RMS-capable plan found (RMS_S_* or MIP_S_CLP*). Skipping AIP configuration." -Tag "Info"
+            return $false
+        }
+
+        # ---- 2) Resolve TenantId (helps Connect-AipService) ----
+        $tenantId = $null
+        try {
+            $org = Invoke-MgGraphRequest -Method GET -Uri "https://graph.microsoft.com/v1.0/organization" -ErrorAction Stop
+            $tenantId = $org.value[0].id
+            Write-Log "Resolved TenantId for AIP: $tenantId" -Tag "Info"
+        } catch {
+            Write-Log "Could not resolve TenantId via Graph; proceeding without it." -Tag "Info"
+        }
+
+        # ---- 3) PS 5.1 child script (robust Enabled detection) ----
+        $childScript = @'
+param([string]$TenantId)
+
+$ErrorActionPreference = 'Stop'
+
+function Out-Log {
+    param([ValidateSet('Info','Success','Error')][string]$Tag,[string]$Message)
+    Write-Output ("::AIP::{0}::{1}" -f $Tag, $Message)
+}
+
+function Get-AipEnabledState {
+    try {
+        $obj = Get-AipService
+        # Preferred: expand the Enabled property
+        try {
+            $val = $obj | Select-Object -ExpandProperty Enabled -ErrorAction Stop
+            return [bool]$val
+        } catch {
+            # Fallback: parse text output if the default view gets in the way
+            $txt = ($obj | Out-String)
+            if ($txt -match 'Enabled\s*:\s*(True|False)') {
+                return [bool]::Parse($Matches[1])
+            }
+            # Last-ditch: if it returned a bare "Enabled" line, assume not enabled (force enable)
+            if ($txt -match '^\s*Enabled\s*$') {
+                return $true
+            }
+            throw "Unable to determine Enabled state from Get-AipService output: `n$txt"
+        }
+    } catch {
+        throw "Get-AipService failed: $($_.Exception.Message)"
+    }
+}
+
+try {
+    # TLS 1.2 just in case
+    try { [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12 } catch {}
+
+    # Trust PSGallery to avoid prompts
+    try {
+        $repo = Get-PSRepository -Name 'PSGallery' -ErrorAction SilentlyContinue
+        if ($null -eq $repo) {
+            Register-PSRepository -Name 'PSGallery' -SourceLocation 'https://www.powershellgallery.com/api/v2' -InstallationPolicy Trusted
+        } elseif ($repo.InstallationPolicy -ne 'Trusted') {
+            Set-PSRepository -Name 'PSGallery' -InstallationPolicy Trusted
+        }
+    } catch {}
+
+    # Install if missing
+    if (-not (Get-Module -ListAvailable -Name AIPService)) {
+        Install-Module -Name AIPService -Scope CurrentUser -Force -AllowClobber *>$null
+        Out-Log -Tag Info -Message "AIPService module installed."
+    }
+
+    Import-Module AIPService -ErrorAction Stop
+    Out-Log -Tag Info -Message "AIPService module imported."
+
+    # Disconnect stale session
+    if (Get-Command Disconnect-AipService -ErrorAction SilentlyContinue) {
+        try { Disconnect-AipService *>$null } catch {}
+    }
+
+    # Connect (may prompt)
+    if ([string]::IsNullOrWhiteSpace($TenantId)) {
+        Connect-AipService *>$null
+    } else {
+        Connect-AipService -TenantId $TenantId *>$null
+    }
+    Out-Log -Tag Info -Message "AIP connection established."
+
+    # Check state -> enable only if needed
+    $enabledBefore = Get-AipEnabledState
+    if ($enabledBefore) {
+        Out-Log -Tag Info -Message "AIP Service already enabled."
+        exit 0
+    }
+
+    Enable-AipService *>$null
+
+    # Verify after enabling
+    Start-Sleep -Seconds 2
+    $enabledAfter = Get-AipEnabledState
+    if ($enabledAfter) {
+        Out-Log -Tag Success -Message "AIP Service enabled."
+        exit 0
+    } else {
+        Out-Log -Tag Error -Message "Enable-AipService reported success, but Enabled state could not be verified as True."
+        exit 2
+    }
+}
+catch {
+    Out-Log -Tag Error -Message $_.Exception.Message
+    exit 2
+}
+'@
+
+        # ---- 4) Run child in Windows PowerShell 5.1 ----
+        $tempPath = [IO.Path]::Combine($env:TEMP, ("Ensure-AIPService-{0}.ps1" -f ([guid]::NewGuid())))
+        Set-Content -Path $tempPath -Value $childScript -Encoding UTF8
+
+        $argList = @('-NoProfile','-NonInteractive','-ExecutionPolicy','Bypass','-File', $tempPath)
+        if ($tenantId) { $argList += @('-TenantId', $tenantId) }
+
+        $psi = New-Object System.Diagnostics.ProcessStartInfo
+        $psi.FileName = 'powershell.exe'  # Windows PowerShell 5.1
+        $psi.Arguments = ($argList -join ' ')
+        $psi.RedirectStandardOutput = $true
+        $psi.RedirectStandardError  = $true
+        $psi.UseShellExecute        = $false
+        $psi.CreateNoWindow         = $true
+
+        $p = [System.Diagnostics.Process]::Start($psi)
+        $stdOut = $p.StandardOutput.ReadToEnd()
+        $stdErr = $p.StandardError.ReadToEnd()
+        $p.WaitForExit()
+        $code = $p.ExitCode
+
+        try { Remove-Item -Path $tempPath -Force -ErrorAction SilentlyContinue } catch {}
+
+        # ---- 5) Re-log child output using your Write-Log tags ----
+        if ($stdOut) {
+            foreach ($line in ($stdOut -split "`r?`n" | Where-Object { $_ -ne '' })) {
+                if ($line -match '^::AIP::(Info|Success|Error)::(.*)$') {
+                    $tag = $matches[1]; $msg = $matches[2].Trim()
+                    Write-Log $msg -Tag $tag
+                } else {
+                    Write-Log $line -Tag "Info"
+                }
+            }
+        }
+        if ($stdErr) {
+            foreach ($line in ($stdErr -split "`r?`n" | Where-Object { $_ -ne '' })) {
+                Write-Log $line -Tag "Error"
+            }
+        }
+
+        if ($code -eq 0) {
+            return $true
+        } else {
+            Write-Log "AIP Service configuration failed in Windows PowerShell 5.1 context (ExitCode=$code)." -Tag "Error"
+            return $false
+        }
+    }
+    catch {
+        Write-Log "Failed to execute AIP Service configuration: $($_.Exception.Message)" -Tag "Error"
+        return $false
+    }
+}
+
 # ---------------------------[ Execution ]---------------------------
 
 Test-ExchangeOnlineConnection
@@ -633,16 +1112,26 @@ $defenderForOffice = Test-DefenderForOfficeLicense
 Write-Log "Defender for Office: $defenderForOffice" -Tag "Debug"
 Test-OrganziationCustomization | Out-Null
 Test-MailboxImportExportRole | Out-Null
+Enable-UnifiedAuditLog
+Disable-FocusedInboxGlobal
 $sharedMailboxMicrosoftDefender = New-SharedMailbox -DisplayName "Microsoft Defender" -MailAlias "microsoft-defender" -Language "de-DE" -VisibleInGal $false
 New-LimitedAccessQuarantinePolicy | Out-Null
 New-FullAccessQuarantinePolicy | Out-Null
-# Set-GlobalQuarantineNotificationPolicy -SenderAddress $sharedMailboxMicrosoftDefender -Language "German" | Out-Null
-Publish-AntiPhishPolicy
-Publish-AntiSpamInboundPolicy
-Publish-AntiSpamOutboundPolicy
-Publish-AntiMalwarePolicy
+Set-GlobalQuarantineNotificationPolicy -SenderAddress $sharedMailboxMicrosoftDefender -Language "German" | Out-Null
+Publish-AntiPhishPolicy | Out-Null
+Publish-AntiSpamInboundPolicy | Out-Null
+Publish-AntiSpamOutboundPolicy | Out-Null
+Publish-AntiMalwarePolicy | Out-Null
+Publish-SafeAttachmentsPolicy -RecipientDomains $allDomains -HasDefenderForOffice $defenderForOffice | Out-Null
+Publish-SafeLinksPolicy -RecipientDomains $allDomains -HasDefenderForOffice $defenderForOffice | Out-Null
+Set-ExternalOutlook
+Set-MailTipsConfig
+Set-AuditDisabled
+Set-MailboxAuditing
+Set-OwaPolicy
+Set-DefaultRoleAssignmentPolicy
+Set-AIPService
 
 # ---------------------------[ End ]---------------------------
-
 
 Complete-Script -ExitCode 0
