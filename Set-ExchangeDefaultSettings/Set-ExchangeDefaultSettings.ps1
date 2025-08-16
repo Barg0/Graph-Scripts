@@ -1,4 +1,4 @@
-# Script version:   2025-06-16 19:50
+# Script version:   2025-08-16 21:40
 # Script author:    Barg0
 
 # ---------------------------[ Script Start Timestamp ]---------------------------
@@ -1133,5 +1133,6 @@ Set-DefaultRoleAssignmentPolicy
 Set-AIPService
 
 # ---------------------------[ End ]---------------------------
+
 
 Complete-Script -ExitCode 0
