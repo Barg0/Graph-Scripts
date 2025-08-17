@@ -1,0 +1,42 @@
+{
+  "displayName": "104 - Baseline - Require - Temporary Access Pass for device join",
+  "state": "enabledForReportingButNotEnforced",
+  "conditions": {
+    "clientAppTypes": [
+      "all"
+    ],
+    "applications": {
+      "includeUserActions": [
+        "urn:user:registerdevice"
+      ],
+      "excludeApplications": [],
+      "includeAuthenticationContextClassReferences": [],
+      "includeApplications": []
+    },
+    "signInRiskLevels": [],
+    "userRiskLevels": [],
+    "users": {
+      "excludeUsers": [
+        "<EmergencyAccessAccount>"
+      ],
+      "includeUsers": [
+        "All"
+      ],
+      "excludeGroups": [],
+      "excludeRoles": [],
+      "includeGroups": [],
+      "includeRoles": []
+    }
+  },
+  "grantControls": {
+    "operator": "OR",
+    "builtInControls": [],
+    "termsOfUse": [],
+    "customAuthenticationFactors": [],
+    "authenticationStrength": {
+      "policyType": "custom",
+      "id": "<TemporaryAccessPass>"
+    }
+  },
+  "sessionControls": null
+}

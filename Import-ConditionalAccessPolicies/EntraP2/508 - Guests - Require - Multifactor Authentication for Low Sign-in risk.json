@@ -1,0 +1,57 @@
+{
+  "displayName": "508 - Guests - Require - Multifactor Authentication for Low Sign-in risk",
+  "state": "enabledForReportingButNotEnforced",
+  "conditions": {
+    "clientAppTypes": [
+      "all"
+    ],
+    "users": {
+      "includeUsers": [],
+      "excludeUsers": [
+        "<EmergencyAccessAccount>"
+      ],
+      "excludeRoles": [],
+      "excludeGroups": [],
+      "includeGroups": [],
+      "includeRoles": [],
+      "includeGuestsOrExternalUsers": {
+        "guestOrExternalUserTypes": "internalGuest,b2bCollaborationGuest,b2bCollaborationMember,b2bDirectConnectUser,otherExternalUser,serviceProvider",
+        "externalTenants": {
+          "@odata.type": "#microsoft.graph.conditionalAccessAllExternalTenants",
+          "membershipKind": "all"
+        }
+      },
+      "excludeGuestsOrExternalUsers": null
+    },
+    "applications": {
+      "includeApplications": [
+        "All"
+      ],
+      "excludeApplications": [],
+      "applicationFilter": null,
+      "includeAuthenticationContextClassReferences": [],
+      "includeUserActions": []
+    },
+    "userRiskLevels": [],
+    "signInRiskLevels": [
+      "low"
+    ],
+    "platforms": null,
+    "locations": null,
+    "devices": null,
+    "deviceStates": null,
+    "times": null,
+    "clientApplications": null
+  },
+  "grantControls": {
+    "operator": "OR",
+    "builtInControls": [],
+    "termsOfUse": [],
+    "customAuthenticationFactors": [],
+    "authenticationStrength": {
+      "policyType": "builtIn",
+      "id": "00000000-0000-0000-0000-000000000002"
+    }
+  },
+  "sessionControls": null
+}

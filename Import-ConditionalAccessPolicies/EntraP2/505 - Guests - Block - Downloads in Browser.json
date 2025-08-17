@@ -1,0 +1,57 @@
+{
+  "displayName": "505 - Guests - Block - Downloads in Browser",
+  "state": "enabledForReportingButNotEnforced",
+  "conditions": {
+    "clientAppTypes": [
+      "browser"
+    ],
+    "platforms": null,
+    "locations": null,
+    "applications": {
+      "includeApplications": [
+        "All"
+      ],
+      "excludeApplications": [],
+      "includeAuthenticationContextClassReferences": [],
+      "includeUserActions": [],
+      "applicationFilter": null
+    },
+    "users": {
+      "includeGuestsOrExternalUsers": {
+        "externalTenants": {
+          "@odata.type": "#microsoft.graph.conditionalAccessAllExternalTenants",
+          "membershipKind": "all"
+        },
+        "guestOrExternalUserTypes": "internalGuest,b2bCollaborationGuest,b2bCollaborationMember,b2bDirectConnectUser,otherExternalUser,serviceProvider"
+      },
+      "includeUsers": [],
+      "excludeUsers": [
+        "<EmergencyAccessAccount>"
+      ],
+      "excludeGroups": [],
+      "excludeRoles": [],
+      "includeGroups": [],
+      "includeRoles": [],
+      "excludeGuestsOrExternalUsers": null
+    },
+    "clientApplications": null,
+    "signInRiskLevels": [],
+    "userRiskLevels": [],
+    "deviceStates": null,
+    "devices": null,
+    "times": null
+  },
+  "grantControls": null,
+  "sessionControls": {
+    "cloudAppSecurity": {
+      "cloudAppSecurityType": "blockDownloads",
+      "isEnabled": true
+    },
+    "continuousAccessEvaluation": null,
+    "signInFrequency": null,
+    "secureSignInSession": null,
+    "disableResilienceDefaults": null,
+    "persistentBrowser": null,
+    "applicationEnforcedRestrictions": null
+  }
+}
