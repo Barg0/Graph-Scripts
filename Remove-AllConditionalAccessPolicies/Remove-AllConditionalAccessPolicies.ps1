@@ -2,7 +2,7 @@ $scriptStartTime = Get-Date
 
 # ---------------------------[ Parameters ]---------------------------
 
-$graphScopes = @("Policy.ReadWrite.ConditionalAccess")
+$graphScopes = @("Policy.ReadWrite.ConditionalAccess, Policy.Read.All")
 $scriptName = "Remove-ConditionalAccessPolicies"
 $logFileName = "$($scriptName).log"
 
@@ -149,3 +149,4 @@ try {
 }
 
 Complete-Script -ExitCode 0
+
