@@ -16,7 +16,6 @@
     },
     "users": {
       "includeUsers": [
-        "All"
       ],
       "excludeUsers": [
         "<EmergencyAccessAccount>"
@@ -48,7 +47,9 @@
         "<EligibleAdminsGroup>",
         "<ServiceAccountsGroup>"
       ],
-      "includeGroups": [],
+      "includeGroups": [
+        "<TravelGroup>"
+      ],
       "includeRoles": [],
       "includeGuestsOrExternalUsers": null,
       "excludeGuestsOrExternalUsers": {

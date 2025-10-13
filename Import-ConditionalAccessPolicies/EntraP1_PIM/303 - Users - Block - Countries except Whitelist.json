@@ -45,7 +45,8 @@
       ],
       "excludeGroups": [
         "<EligibleAdminsGroup>",
-        "<ServiceAccountsGroup>"
+        "<ServiceAccountsGroup>",
+        "<TravelGroup>"
       ],
       "includeGroups": [],
       "includeRoles": [],
