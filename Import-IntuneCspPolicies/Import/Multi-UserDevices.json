@@ -1,0 +1,62 @@
+{
+  "displayName": "🔴 – 🔗 Multi-User Devices",
+  "description": null,
+  "omaSettings": [
+    {
+      "displayName": "EnableSharedPCModeWithOneDriveSync",
+      "description": null,
+      "omaUri": "./Vendor/MSFT/SharedPC/EnableSharedPCModeWithOneDriveSync",
+      "value": true,
+      "odataType": "#microsoft.graph.omaSettingBoolean"
+    },
+    {
+      "displayName": "AccountModel",
+      "description": null,
+      "omaUri": "./Vendor/MSFT/SharedPC/AccountModel",
+      "value": 1,
+      "odataType": "#microsoft.graph.omaSettingInteger"
+    },
+    {
+      "displayName": "RestrictLocalStorage",
+      "description": null,
+      "omaUri": "./Vendor/MSFT/SharedPC/RestrictLocalStorage",
+      "value": false,
+      "odataType": "#microsoft.graph.omaSettingBoolean"
+    },
+    {
+      "displayName": "SignInOnResume",
+      "description": null,
+      "omaUri": "./Vendor/MSFT/SharedPC/SignInOnResume",
+      "value": true,
+      "odataType": "#microsoft.graph.omaSettingBoolean"
+    },
+    {
+      "displayName": "SetPowerPolicies",
+      "description": null,
+      "omaUri": "./Vendor/MSFT/SharedPC/SetPowerPolicies",
+      "value": false,
+      "odataType": "#microsoft.graph.omaSettingBoolean"
+    },
+    {
+      "displayName": "SetEduPolicies",
+      "description": null,
+      "omaUri": "./Vendor/MSFT/SharedPC/SetEduPolicies",
+      "value": false,
+      "odataType": "#microsoft.graph.omaSettingBoolean"
+    },
+    {
+      "displayName": "UserAccountControl_BehaviorOfTheElevationPromptForStandardUsers",
+      "description": null,
+      "omaUri": "./Device/Vendor/MSFT/Policy/Config/LocalPoliciesSecurityOptions/UserAccountControl_BehaviorOfTheElevationPromptForStandardUsers",
+      "value": 1,
+      "odataType": "#microsoft.graph.omaSettingInteger"
+    },
+    {
+      "displayName": "UseSecurityKeyForSignin",
+      "description": null,
+      "omaUri": "./Device/Vendor/MSFT/PassportForWork/SecurityKey/UseSecurityKeyForSignin",
+      "value": 0,
+      "odataType": "#microsoft.graph.omaSettingInteger"
+    }
+  ]
+}

@@ -1,0 +1,13 @@
+{
+  "displayName": "🔴 – ✈️ Autopilot – Account ESP",
+  "description": null,
+  "omaSettings": [
+    {
+      "displayName": "SkipUserStatusPage",
+      "description": null,
+      "omaUri": "./Device/Vendor/MSFT/DMClient/Provider/MS DM Server/FirstSyncStatus/SkipUserStatusPage",
+      "value": true,
+      "odataType": "#microsoft.graph.omaSettingBoolean"
+    }
+  ]
+}

@@ -1,0 +1,34 @@
+{
+  "displayName": "🔴 – 🔑 Login – Windows Hello for Business",
+  "description": null,
+  "omaSettings": [
+    {
+      "displayName": "CloudKerberosTicketRetrievalEnabled",
+      "description": null,
+      "omaUri": "./Device/Vendor/MSFT/Policy/Config/Kerberos/CloudKerberosTicketRetrievalEnabled",
+      "value": 1,
+      "odataType": "#microsoft.graph.omaSettingInteger"
+    },
+    {
+      "displayName": "DisablePostLogonProvisioning",
+      "description": null,
+      "omaUri": "./Device/Vendor/MSFT/PassportForWork/{TenantID}/Policies/DisablePostLogonProvisioning",
+      "value": true,
+      "odataType": "#microsoft.graph.omaSettingBoolean"
+    },
+    {
+      "displayName": "UseCloudTrustForOnPremAuth",
+      "description": null,
+      "omaUri": "./Device/Vendor/MSFT/PassportForWork/{TenantID}/Policies/UseCloudTrustForOnPremAuth",
+      "value": true,
+      "odataType": "#microsoft.graph.omaSettingBoolean"
+    },
+    {
+      "displayName": "UseSecurityKeyForSignin",
+      "description": null,
+      "omaUri": "./Device/Vendor/MSFT/PassportForWork/SecurityKey/UseSecurityKeyForSignin",
+      "value": 1,
+      "odataType": "#microsoft.graph.omaSettingInteger"
+    }
+  ]
+}
