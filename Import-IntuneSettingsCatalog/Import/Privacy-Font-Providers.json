@@ -1,0 +1,37 @@
+{
+  "@odata.context": "https://graph.microsoft.com/beta/$metadata#deviceManagement/configurationPolicies/$entity",
+  "createdDateTime": "2025-10-25T06:56:10.4212528Z",
+  "creationSource": null,
+  "description": "80.1 (L2) Ensure 'Allow Font Providers' is set to 'Not allowed'",
+  "lastModifiedDateTime": "2025-10-25T16:26:51.9244591Z",
+  "name": "🔴 – 👥 Privacy – Font Providers",
+  "platforms": "windows10",
+  "priorityMetaData": null,
+  "roleScopeTagIds": [
+    "0"
+  ],
+  "settingCount": 1,
+  "technologies": "mdm",
+  "id": "4cbac19b-28a4-4c14-8c41-eb01f76148aa",
+  "templateReference": {
+    "templateFamily": "none",
+    "templateDisplayVersion": null,
+    "templateDisplayName": null,
+    "templateId": ""
+  },
+  "settings": [
+    {
+      "settingInstance": {
+        "choiceSettingValue": {
+          "value": "device_vendor_msft_policy_config_system_allowfontproviders_0",
+          "settingValueTemplateReference": null,
+          "children": []
+        },
+        "settingDefinitionId": "device_vendor_msft_policy_config_system_allowfontproviders",
+        "settingInstanceTemplateReference": null,
+        "@odata.type": "#microsoft.graph.deviceManagementConfigurationChoiceSettingInstance"
+      },
+      "id": "0"
+    }
+  ]
+}

@@ -1,0 +1,115 @@
+{
+  "@odata.context": "https://graph.microsoft.com/beta/$metadata#deviceManagement/configurationPolicies/$entity",
+  "createdDateTime": "2025-10-19T10:34:08.4008564Z",
+  "creationSource": null,
+  "description": "4.11.55.1.1 (L1) Ensure 'Allow Basic authentication' is set to 'Disabled'\n4.11.55.1.2 (L1) Ensure 'Allow unencrypted traffic' is set to 'Disabled'\n4.11.55.1.3 (L1) Ensure 'Disallow Digest authentication' is set to 'Enabled'\n4.11.55.2.1 (L1) Ensure 'Allow Basic authentication' is set to 'Disabled'\n4.11.55.2.2 (L2) Ensure 'Allow remote server management through WinRM' is set to 'Disabled'\n4.11.55.2.3 (L1) Ensure 'Allow unencrypted traffic' is set to 'Disabled'\n4.11.55.2.4 (L1) Ensure 'Disallow WinRM from storing RunAs credentials' is set to 'Enabled'",
+  "lastModifiedDateTime": "2025-10-25T16:46:55.0287623Z",
+  "name": "🔴 – 🔒 Security – WinRM",
+  "platforms": "windows10",
+  "priorityMetaData": null,
+  "roleScopeTagIds": [
+    "0"
+  ],
+  "settingCount": 7,
+  "technologies": "mdm",
+  "id": "06415c86-0c3a-4b58-9d6f-5d7c598e0def",
+  "templateReference": {
+    "templateFamily": "none",
+    "templateDisplayVersion": null,
+    "templateDisplayName": null,
+    "templateId": ""
+  },
+  "settings": [
+    {
+      "settingInstance": {
+        "choiceSettingValue": {
+          "value": "device_vendor_msft_policy_config_remotemanagement_allowbasicauthentication_client_0",
+          "settingValueTemplateReference": null,
+          "children": []
+        },
+        "settingDefinitionId": "device_vendor_msft_policy_config_remotemanagement_allowbasicauthentication_client",
+        "settingInstanceTemplateReference": null,
+        "@odata.type": "#microsoft.graph.deviceManagementConfigurationChoiceSettingInstance"
+      },
+      "id": "0"
+    },
+    {
+      "settingInstance": {
+        "choiceSettingValue": {
+          "value": "device_vendor_msft_policy_config_remotemanagement_allowunencryptedtraffic_client_0",
+          "settingValueTemplateReference": null,
+          "children": []
+        },
+        "settingDefinitionId": "device_vendor_msft_policy_config_remotemanagement_allowunencryptedtraffic_client",
+        "settingInstanceTemplateReference": null,
+        "@odata.type": "#microsoft.graph.deviceManagementConfigurationChoiceSettingInstance"
+      },
+      "id": "1"
+    },
+    {
+      "settingInstance": {
+        "choiceSettingValue": {
+          "value": "device_vendor_msft_policy_config_remotemanagement_disallowdigestauthentication_1",
+          "settingValueTemplateReference": null,
+          "children": []
+        },
+        "settingDefinitionId": "device_vendor_msft_policy_config_remotemanagement_disallowdigestauthentication",
+        "settingInstanceTemplateReference": null,
+        "@odata.type": "#microsoft.graph.deviceManagementConfigurationChoiceSettingInstance"
+      },
+      "id": "2"
+    },
+    {
+      "settingInstance": {
+        "choiceSettingValue": {
+          "value": "device_vendor_msft_policy_config_remotemanagement_allowbasicauthentication_service_0",
+          "settingValueTemplateReference": null,
+          "children": []
+        },
+        "settingDefinitionId": "device_vendor_msft_policy_config_remotemanagement_allowbasicauthentication_service",
+        "settingInstanceTemplateReference": null,
+        "@odata.type": "#microsoft.graph.deviceManagementConfigurationChoiceSettingInstance"
+      },
+      "id": "3"
+    },
+    {
+      "settingInstance": {
+        "choiceSettingValue": {
+          "value": "device_vendor_msft_policy_config_remotemanagement_allowremoteservermanagement_0",
+          "settingValueTemplateReference": null,
+          "children": []
+        },
+        "settingDefinitionId": "device_vendor_msft_policy_config_remotemanagement_allowremoteservermanagement",
+        "settingInstanceTemplateReference": null,
+        "@odata.type": "#microsoft.graph.deviceManagementConfigurationChoiceSettingInstance"
+      },
+      "id": "4"
+    },
+    {
+      "settingInstance": {
+        "choiceSettingValue": {
+          "value": "device_vendor_msft_policy_config_remotemanagement_allowunencryptedtraffic_service_0",
+          "settingValueTemplateReference": null,
+          "children": []
+        },
+        "settingDefinitionId": "device_vendor_msft_policy_config_remotemanagement_allowunencryptedtraffic_service",
+        "settingInstanceTemplateReference": null,
+        "@odata.type": "#microsoft.graph.deviceManagementConfigurationChoiceSettingInstance"
+      },
+      "id": "5"
+    },
+    {
+      "settingInstance": {
+        "choiceSettingValue": {
+          "value": "device_vendor_msft_policy_config_remotemanagement_disallowstoringofrunascredentials_1",
+          "settingValueTemplateReference": null,
+          "children": []
+        },
+        "settingDefinitionId": "device_vendor_msft_policy_config_remotemanagement_disallowstoringofrunascredentials",
+        "settingInstanceTemplateReference": null,
+        "@odata.type": "#microsoft.graph.deviceManagementConfigurationChoiceSettingInstance"
+      },
+      "id": "6"
+    }
+  ]
+}

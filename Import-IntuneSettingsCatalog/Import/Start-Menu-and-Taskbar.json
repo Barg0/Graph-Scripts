@@ -1,0 +1,206 @@
+{
+  "@odata.context": "https://graph.microsoft.com/beta/$metadata#deviceManagement/configurationPolicies/$entity",
+  "createdDateTime": "2025-10-18T20:00:19.1137478Z",
+  "creationSource": null,
+  "description": "94.1 (L1) Ensure 'Allow widgets' is set to 'Not allowed'",
+  "lastModifiedDateTime": "2025-10-25T17:15:28.1849016Z",
+  "name": "🔴 – 🎨 Start Menu and Taskbar",
+  "platforms": "windows10",
+  "priorityMetaData": null,
+  "roleScopeTagIds": [
+    "0"
+  ],
+  "settingCount": 14,
+  "technologies": "mdm",
+  "id": "72647212-5f78-46a7-966e-7190c53856e2",
+  "templateReference": {
+    "templateFamily": "none",
+    "templateDisplayVersion": null,
+    "templateDisplayName": null,
+    "templateId": ""
+  },
+  "settings": [
+    {
+      "settingInstance": {
+        "choiceSettingValue": {
+          "value": "user_vendor_msft_policy_config_admx_taskbar_nopinningstoretotaskbar_1",
+          "settingValueTemplateReference": null,
+          "children": []
+        },
+        "settingDefinitionId": "user_vendor_msft_policy_config_admx_taskbar_nopinningstoretotaskbar",
+        "settingInstanceTemplateReference": null,
+        "@odata.type": "#microsoft.graph.deviceManagementConfigurationChoiceSettingInstance"
+      },
+      "id": "0"
+    },
+    {
+      "settingInstance": {
+        "choiceSettingValue": {
+          "value": "device_vendor_msft_policy_config_start_allowpinnedfolderdocuments_0",
+          "settingValueTemplateReference": null,
+          "children": []
+        },
+        "settingDefinitionId": "device_vendor_msft_policy_config_start_allowpinnedfolderdocuments",
+        "settingInstanceTemplateReference": null,
+        "@odata.type": "#microsoft.graph.deviceManagementConfigurationChoiceSettingInstance"
+      },
+      "id": "1"
+    },
+    {
+      "settingInstance": {
+        "choiceSettingValue": {
+          "value": "device_vendor_msft_policy_config_start_allowpinnedfolderdownloads_0",
+          "settingValueTemplateReference": null,
+          "children": []
+        },
+        "settingDefinitionId": "device_vendor_msft_policy_config_start_allowpinnedfolderdownloads",
+        "settingInstanceTemplateReference": null,
+        "@odata.type": "#microsoft.graph.deviceManagementConfigurationChoiceSettingInstance"
+      },
+      "id": "2"
+    },
+    {
+      "settingInstance": {
+        "choiceSettingValue": {
+          "value": "device_vendor_msft_policy_config_start_allowpinnedfolderfileexplorer_1",
+          "settingValueTemplateReference": null,
+          "children": []
+        },
+        "settingDefinitionId": "device_vendor_msft_policy_config_start_allowpinnedfolderfileexplorer",
+        "settingInstanceTemplateReference": null,
+        "@odata.type": "#microsoft.graph.deviceManagementConfigurationChoiceSettingInstance"
+      },
+      "id": "3"
+    },
+    {
+      "settingInstance": {
+        "choiceSettingValue": {
+          "value": "device_vendor_msft_policy_config_start_allowpinnedfolderhomegroup_0",
+          "settingValueTemplateReference": null,
+          "children": []
+        },
+        "settingDefinitionId": "device_vendor_msft_policy_config_start_allowpinnedfolderhomegroup",
+        "settingInstanceTemplateReference": null,
+        "@odata.type": "#microsoft.graph.deviceManagementConfigurationChoiceSettingInstance"
+      },
+      "id": "4"
+    },
+    {
+      "settingInstance": {
+        "choiceSettingValue": {
+          "value": "device_vendor_msft_policy_config_start_allowpinnedfoldermusic_0",
+          "settingValueTemplateReference": null,
+          "children": []
+        },
+        "settingDefinitionId": "device_vendor_msft_policy_config_start_allowpinnedfoldermusic",
+        "settingInstanceTemplateReference": null,
+        "@odata.type": "#microsoft.graph.deviceManagementConfigurationChoiceSettingInstance"
+      },
+      "id": "5"
+    },
+    {
+      "settingInstance": {
+        "choiceSettingValue": {
+          "value": "device_vendor_msft_policy_config_start_allowpinnedfoldernetwork_0",
+          "settingValueTemplateReference": null,
+          "children": []
+        },
+        "settingDefinitionId": "device_vendor_msft_policy_config_start_allowpinnedfoldernetwork",
+        "settingInstanceTemplateReference": null,
+        "@odata.type": "#microsoft.graph.deviceManagementConfigurationChoiceSettingInstance"
+      },
+      "id": "6"
+    },
+    {
+      "settingInstance": {
+        "choiceSettingValue": {
+          "value": "device_vendor_msft_policy_config_start_allowpinnedfolderpersonalfolder_0",
+          "settingValueTemplateReference": null,
+          "children": []
+        },
+        "settingDefinitionId": "device_vendor_msft_policy_config_start_allowpinnedfolderpersonalfolder",
+        "settingInstanceTemplateReference": null,
+        "@odata.type": "#microsoft.graph.deviceManagementConfigurationChoiceSettingInstance"
+      },
+      "id": "7"
+    },
+    {
+      "settingInstance": {
+        "choiceSettingValue": {
+          "value": "device_vendor_msft_policy_config_start_allowpinnedfolderpictures_0",
+          "settingValueTemplateReference": null,
+          "children": []
+        },
+        "settingDefinitionId": "device_vendor_msft_policy_config_start_allowpinnedfolderpictures",
+        "settingInstanceTemplateReference": null,
+        "@odata.type": "#microsoft.graph.deviceManagementConfigurationChoiceSettingInstance"
+      },
+      "id": "8"
+    },
+    {
+      "settingInstance": {
+        "choiceSettingValue": {
+          "value": "device_vendor_msft_policy_config_start_allowpinnedfoldersettings_1",
+          "settingValueTemplateReference": null,
+          "children": []
+        },
+        "settingDefinitionId": "device_vendor_msft_policy_config_start_allowpinnedfoldersettings",
+        "settingInstanceTemplateReference": null,
+        "@odata.type": "#microsoft.graph.deviceManagementConfigurationChoiceSettingInstance"
+      },
+      "id": "9"
+    },
+    {
+      "settingInstance": {
+        "choiceSettingValue": {
+          "value": "device_vendor_msft_policy_config_start_allowpinnedfoldervideos_0",
+          "settingValueTemplateReference": null,
+          "children": []
+        },
+        "settingDefinitionId": "device_vendor_msft_policy_config_start_allowpinnedfoldervideos",
+        "settingInstanceTemplateReference": null,
+        "@odata.type": "#microsoft.graph.deviceManagementConfigurationChoiceSettingInstance"
+      },
+      "id": "10"
+    },
+    {
+      "settingInstance": {
+        "settingDefinitionId": "device_vendor_msft_policy_config_start_configurestartpins",
+        "settingInstanceTemplateReference": null,
+        "@odata.type": "#microsoft.graph.deviceManagementConfigurationSimpleSettingInstance",
+        "simpleSettingValue": {
+          "value": "{\"applyOnce\":true,\"pinnedList\":[{\"desktopAppId\":\"MSEdge\"},{\"packagedAppId\":\"MSTeams_8wekyb3d8bbwe!MSTeams\"},{\"desktopAppId\":\"Microsoft.Office.WINWORD.EXE.15\"},{\"desktopAppId\":\"Microsoft.Office.EXCEL.EXE.15\"},{\"desktopAppId\":\"Microsoft.Office.POWERPNT.EXE.15\"},{\"desktopAppId\":\"Microsoft.Office.OUTLOOK.EXE.15\"},{\"desktopAppId\":\"Microsoft.Office.ONENOTE.EXE.15\"},{\"desktopAppId\":\"Microsoft.SkyDrive.Desktop\"},{\"packagedAppId\":\"Microsoft.CompanyPortal_8wekyb3d8bbwe!App\"}]}",
+          "settingValueTemplateReference": null,
+          "@odata.type": "#microsoft.graph.deviceManagementConfigurationStringSettingValue"
+        }
+      },
+      "id": "11"
+    },
+    {
+      "settingInstance": {
+        "choiceSettingValue": {
+          "value": "device_vendor_msft_policy_config_start_hiderecentlyaddedapps_1",
+          "settingValueTemplateReference": null,
+          "children": []
+        },
+        "settingDefinitionId": "device_vendor_msft_policy_config_start_hiderecentlyaddedapps",
+        "settingInstanceTemplateReference": null,
+        "@odata.type": "#microsoft.graph.deviceManagementConfigurationChoiceSettingInstance"
+      },
+      "id": "12"
+    },
+    {
+      "settingInstance": {
+        "choiceSettingValue": {
+          "value": "device_vendor_msft_policy_config_newsandinterests_allownewsandinterests_0",
+          "settingValueTemplateReference": null,
+          "children": []
+        },
+        "settingDefinitionId": "device_vendor_msft_policy_config_newsandinterests_allownewsandinterests",
+        "settingInstanceTemplateReference": null,
+        "@odata.type": "#microsoft.graph.deviceManagementConfigurationChoiceSettingInstance"
+      },
+      "id": "13"
+    }
+  ]
+}

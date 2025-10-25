@@ -1,0 +1,37 @@
+{
+  "@odata.context": "https://graph.microsoft.com/beta/$metadata#deviceManagement/configurationPolicies/$entity",
+  "createdDateTime": "2025-10-19T10:32:58.856504Z",
+  "creationSource": null,
+  "description": "4.11.56.1 (L2) Ensure 'Allow Remote Shell Access' is set to 'Disabled'",
+  "lastModifiedDateTime": "2025-10-25T16:45:07.934474Z",
+  "name": "🔴 – 🔒 Security – Remote Shell Access",
+  "platforms": "windows10",
+  "priorityMetaData": null,
+  "roleScopeTagIds": [
+    "0"
+  ],
+  "settingCount": 1,
+  "technologies": "mdm",
+  "id": "58f62c8d-9563-42da-b709-be69bac37802",
+  "templateReference": {
+    "templateFamily": "none",
+    "templateDisplayVersion": null,
+    "templateDisplayName": null,
+    "templateId": ""
+  },
+  "settings": [
+    {
+      "settingInstance": {
+        "choiceSettingValue": {
+          "value": "device_vendor_msft_policy_config_remoteshell_allowremoteshellaccess_0",
+          "settingValueTemplateReference": null,
+          "children": []
+        },
+        "settingDefinitionId": "device_vendor_msft_policy_config_remoteshell_allowremoteshellaccess",
+        "settingInstanceTemplateReference": null,
+        "@odata.type": "#microsoft.graph.deviceManagementConfigurationChoiceSettingInstance"
+      },
+      "id": "0"
+    }
+  ]
+}

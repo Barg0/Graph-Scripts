@@ -1,0 +1,102 @@
+{
+  "@odata.context": "https://graph.microsoft.com/beta/$metadata#deviceManagement/configurationPolicies/$entity",
+  "createdDateTime": "2025-10-19T09:13:59.1645248Z",
+  "creationSource": null,
+  "description": "4.10.23.1 (L2) Ensure 'Support device authentication using\ncertificate' is set to 'Enabled: Automatic'",
+  "lastModifiedDateTime": "2025-10-25T16:43:23.8419541Z",
+  "name": "🔴 – 🔒 Security – Kerberos",
+  "platforms": "windows10",
+  "priorityMetaData": null,
+  "roleScopeTagIds": [
+    "0"
+  ],
+  "settingCount": 2,
+  "technologies": "mdm",
+  "id": "48bd7d7a-e865-44e9-bde6-9cd5d4ecb747",
+  "templateReference": {
+    "templateFamily": "none",
+    "templateDisplayVersion": null,
+    "templateDisplayName": null,
+    "templateId": ""
+  },
+  "settings": [
+    {
+      "settingInstance": {
+        "choiceSettingValue": {
+          "value": "device_vendor_msft_policy_config_admx_kerberos_devicepkinitenabled_1",
+          "settingValueTemplateReference": null,
+          "children": [
+            {
+              "choiceSettingValue": {
+                "value": "device_vendor_msft_policy_config_admx_kerberos_devicepkinitenabled_devicepkinitbehavior_0",
+                "settingValueTemplateReference": null,
+                "children": []
+              },
+              "settingDefinitionId": "device_vendor_msft_policy_config_admx_kerberos_devicepkinitenabled_devicepkinitbehavior",
+              "settingInstanceTemplateReference": null,
+              "@odata.type": "#microsoft.graph.deviceManagementConfigurationChoiceSettingInstance"
+            }
+          ]
+        },
+        "settingDefinitionId": "device_vendor_msft_policy_config_admx_kerberos_devicepkinitenabled",
+        "settingInstanceTemplateReference": null,
+        "@odata.type": "#microsoft.graph.deviceManagementConfigurationChoiceSettingInstance"
+      },
+      "id": "0"
+    },
+    {
+      "settingInstance": {
+        "choiceSettingValue": {
+          "value": "device_vendor_msft_policy_config_kerberos_pkinithashalgorithmconfiguration_1",
+          "settingValueTemplateReference": null,
+          "children": [
+            {
+              "choiceSettingValue": {
+                "value": "device_vendor_msft_policy_config_kerberos_pkinithashalgorithmsha1_0",
+                "settingValueTemplateReference": null,
+                "children": []
+              },
+              "settingDefinitionId": "device_vendor_msft_policy_config_kerberos_pkinithashalgorithmsha1",
+              "settingInstanceTemplateReference": null,
+              "@odata.type": "#microsoft.graph.deviceManagementConfigurationChoiceSettingInstance"
+            },
+            {
+              "choiceSettingValue": {
+                "value": "device_vendor_msft_policy_config_kerberos_pkinithashalgorithmsha256_3",
+                "settingValueTemplateReference": null,
+                "children": []
+              },
+              "settingDefinitionId": "device_vendor_msft_policy_config_kerberos_pkinithashalgorithmsha256",
+              "settingInstanceTemplateReference": null,
+              "@odata.type": "#microsoft.graph.deviceManagementConfigurationChoiceSettingInstance"
+            },
+            {
+              "choiceSettingValue": {
+                "value": "device_vendor_msft_policy_config_kerberos_pkinithashalgorithmsha384_3",
+                "settingValueTemplateReference": null,
+                "children": []
+              },
+              "settingDefinitionId": "device_vendor_msft_policy_config_kerberos_pkinithashalgorithmsha384",
+              "settingInstanceTemplateReference": null,
+              "@odata.type": "#microsoft.graph.deviceManagementConfigurationChoiceSettingInstance"
+            },
+            {
+              "choiceSettingValue": {
+                "value": "device_vendor_msft_policy_config_kerberos_pkinithashalgorithmsha512_3",
+                "settingValueTemplateReference": null,
+                "children": []
+              },
+              "settingDefinitionId": "device_vendor_msft_policy_config_kerberos_pkinithashalgorithmsha512",
+              "settingInstanceTemplateReference": null,
+              "@odata.type": "#microsoft.graph.deviceManagementConfigurationChoiceSettingInstance"
+            }
+          ]
+        },
+        "settingDefinitionId": "device_vendor_msft_policy_config_kerberos_pkinithashalgorithmconfiguration",
+        "settingInstanceTemplateReference": null,
+        "@odata.type": "#microsoft.graph.deviceManagementConfigurationChoiceSettingInstance"
+      },
+      "id": "1"
+    }
+  ]
+}

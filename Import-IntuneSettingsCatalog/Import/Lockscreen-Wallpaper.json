@@ -1,0 +1,71 @@
+{
+  "@odata.context": "https://graph.microsoft.com/beta/$metadata#deviceManagement/configurationPolicies/$entity",
+  "createdDateTime": "2025-10-25T06:45:35.6288706Z",
+  "creationSource": null,
+  "description": "",
+  "lastModifiedDateTime": "2025-10-25T16:26:26.1764226Z",
+  "name": "🔴 – 🏞️ Lockscreen – Wallpaper",
+  "platforms": "windows10",
+  "priorityMetaData": null,
+  "roleScopeTagIds": [
+    "0"
+  ],
+  "settingCount": 2,
+  "technologies": "mdm",
+  "id": "df8f7c0a-6311-4832-87e3-de66a1ae6898",
+  "templateReference": {
+    "templateFamily": "none",
+    "templateDisplayVersion": null,
+    "templateDisplayName": null,
+    "templateId": ""
+  },
+  "settings": [
+    {
+      "settingInstance": {
+        "choiceSettingValue": {
+          "value": "device_vendor_msft_policy_config_admx_controlpaneldisplay_cpl_personalization_forcedefaultlockscreen_1",
+          "settingValueTemplateReference": null,
+          "children": [
+            {
+              "settingDefinitionId": "device_vendor_msft_policy_config_admx_controlpaneldisplay_cpl_personalization_forcedefaultlockscreen_lockscreenimage",
+              "settingInstanceTemplateReference": null,
+              "@odata.type": "#microsoft.graph.deviceManagementConfigurationSimpleSettingInstance",
+              "simpleSettingValue": {
+                "value": "C:\\ProgramData\\IntuneFiles\\Wallpaper\\Lockscreen.jpg",
+                "settingValueTemplateReference": null,
+                "@odata.type": "#microsoft.graph.deviceManagementConfigurationStringSettingValue"
+              }
+            },
+            {
+              "choiceSettingValue": {
+                "value": "device_vendor_msft_policy_config_admx_controlpaneldisplay_cpl_personalization_forcedefaultlockscreen_lockscreenoverlaysdisabled_1",
+                "settingValueTemplateReference": null,
+                "children": []
+              },
+              "settingDefinitionId": "device_vendor_msft_policy_config_admx_controlpaneldisplay_cpl_personalization_forcedefaultlockscreen_lockscreenoverlaysdisabled",
+              "settingInstanceTemplateReference": null,
+              "@odata.type": "#microsoft.graph.deviceManagementConfigurationChoiceSettingInstance"
+            }
+          ]
+        },
+        "settingDefinitionId": "device_vendor_msft_policy_config_admx_controlpaneldisplay_cpl_personalization_forcedefaultlockscreen",
+        "settingInstanceTemplateReference": null,
+        "@odata.type": "#microsoft.graph.deviceManagementConfigurationChoiceSettingInstance"
+      },
+      "id": "0"
+    },
+    {
+      "settingInstance": {
+        "choiceSettingValue": {
+          "value": "device_vendor_msft_policy_config_admx_controlpaneldisplay_cpl_personalization_nochanginglockscreen_1",
+          "settingValueTemplateReference": null,
+          "children": []
+        },
+        "settingDefinitionId": "device_vendor_msft_policy_config_admx_controlpaneldisplay_cpl_personalization_nochanginglockscreen",
+        "settingInstanceTemplateReference": null,
+        "@odata.type": "#microsoft.graph.deviceManagementConfigurationChoiceSettingInstance"
+      },
+      "id": "1"
+    }
+  ]
+}

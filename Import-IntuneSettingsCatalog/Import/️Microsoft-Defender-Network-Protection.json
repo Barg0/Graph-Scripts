@@ -1,0 +1,37 @@
+{
+  "@odata.context": "https://graph.microsoft.com/beta/$metadata#deviceManagement/configurationPolicies/$entity",
+  "createdDateTime": "2025-10-25T12:57:15.6893079Z",
+  "creationSource": null,
+  "description": "22.24 (L2) Ensure 'Enable Convert Warn To Block' is set to 'Warn\nverdicts are converted to block'",
+  "lastModifiedDateTime": "2025-10-25T16:51:05.6037358Z",
+  "name": "🔴 – 🛡️ Microsoft Defender – Network Protection",
+  "platforms": "windows10",
+  "priorityMetaData": null,
+  "roleScopeTagIds": [
+    "0"
+  ],
+  "settingCount": 1,
+  "technologies": "mdm",
+  "id": "da5a15b2-b6ef-4b68-861c-84e1a1beb4bf",
+  "templateReference": {
+    "templateFamily": "none",
+    "templateDisplayVersion": null,
+    "templateDisplayName": null,
+    "templateId": ""
+  },
+  "settings": [
+    {
+      "settingInstance": {
+        "choiceSettingValue": {
+          "value": "device_vendor_msft_defender_configuration_enableconvertwarntoblock_1",
+          "settingValueTemplateReference": null,
+          "children": []
+        },
+        "settingDefinitionId": "device_vendor_msft_defender_configuration_enableconvertwarntoblock",
+        "settingInstanceTemplateReference": null,
+        "@odata.type": "#microsoft.graph.deviceManagementConfigurationChoiceSettingInstance"
+      },
+      "id": "0"
+    }
+  ]
+}

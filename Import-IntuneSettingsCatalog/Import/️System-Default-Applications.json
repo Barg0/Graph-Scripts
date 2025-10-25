@@ -1,0 +1,37 @@
+{
+  "@odata.context": "https://graph.microsoft.com/beta/$metadata#deviceManagement/configurationPolicies/$entity",
+  "createdDateTime": "2025-10-18T20:16:19.7221151Z",
+  "creationSource": null,
+  "description": "",
+  "lastModifiedDateTime": "2025-10-25T16:22:29.4406169Z",
+  "name": "🔴 – ⚙️ System – Default Applications",
+  "platforms": "windows10",
+  "priorityMetaData": null,
+  "roleScopeTagIds": [
+    "0"
+  ],
+  "settingCount": 1,
+  "technologies": "mdm",
+  "id": "a71dba18-57d4-4dda-866a-5e46c488bcbd",
+  "templateReference": {
+    "templateFamily": "none",
+    "templateDisplayVersion": null,
+    "templateDisplayName": null,
+    "templateId": ""
+  },
+  "settings": [
+    {
+      "settingInstance": {
+        "settingDefinitionId": "device_vendor_msft_policy_config_applicationdefaults_defaultassociationsconfiguration",
+        "settingInstanceTemplateReference": null,
+        "@odata.type": "#microsoft.graph.deviceManagementConfigurationSimpleSettingInstance",
+        "simpleSettingValue": {
+          "value": "PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4NCjxEZWZhdWx0QXNzb2NpYXRpb25zPg0KICA8QXNzb2NpYXRpb24gSWRlbnRpZmllcj0ibWFpbHRvIiBQcm9nSWQ9Ik91dGxvb2suVVJMLm1haWx0by4xNSIgQXBwbGljYXRpb25OYW1lPSJPdXRsb29rIiAvPg0KICA8QXNzb2NpYXRpb24gSWRlbnRpZmllcj0iLmVtbCIgUHJvZ0lkPSJPdXRsb29rLkZpbGUuZW1sLjE1IiBBcHBsaWNhdGlvbk5hbWU9Ik91dGxvb2siIC8+DQo8L0RlZmF1bHRBc3NvY2lhdGlvbnM+",
+          "settingValueTemplateReference": null,
+          "@odata.type": "#microsoft.graph.deviceManagementConfigurationStringSettingValue"
+        }
+      },
+      "id": "0"
+    }
+  ]
+}

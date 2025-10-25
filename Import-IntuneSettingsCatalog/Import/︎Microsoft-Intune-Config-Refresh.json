@@ -1,0 +1,59 @@
+{
+  "@odata.context": "https://graph.microsoft.com/beta/$metadata#deviceManagement/configurationPolicies/$entity",
+  "createdDateTime": "2025-10-18T19:41:07.7345287Z",
+  "creationSource": null,
+  "description": "15.1 (L1) Ensure 'Config refresh' is set to 'Enabled'\n15.2 (L1) Ensure 'Refresh cadence' is set to '90' (or less)",
+  "lastModifiedDateTime": "2025-10-25T16:21:53.8311963Z",
+  "name": "🔴 – ☁︎ Microsoft Intune – Config Refresh",
+  "platforms": "windows10",
+  "priorityMetaData": null,
+  "roleScopeTagIds": [
+    "0"
+  ],
+  "settingCount": 1,
+  "technologies": "mdm",
+  "id": "af0539d5-fdb4-4430-96f2-2106d8b9e363",
+  "templateReference": {
+    "templateFamily": "none",
+    "templateDisplayVersion": null,
+    "templateDisplayName": null,
+    "templateId": ""
+  },
+  "settings": [
+    {
+      "settingInstance": {
+        "settingDefinitionId": "device_vendor_msft_dmclient_provider_{providerid}",
+        "settingInstanceTemplateReference": null,
+        "@odata.type": "#microsoft.graph.deviceManagementConfigurationGroupSettingCollectionInstance",
+        "groupSettingCollectionValue": [
+          {
+            "settingValueTemplateReference": null,
+            "children": [
+              {
+                "choiceSettingValue": {
+                  "value": "device_vendor_msft_dmclient_provider_{providerid}_configrefresh_enabled_true",
+                  "settingValueTemplateReference": null,
+                  "children": []
+                },
+                "settingDefinitionId": "device_vendor_msft_dmclient_provider_{providerid}_configrefresh_enabled",
+                "settingInstanceTemplateReference": null,
+                "@odata.type": "#microsoft.graph.deviceManagementConfigurationChoiceSettingInstance"
+              },
+              {
+                "settingDefinitionId": "device_vendor_msft_dmclient_provider_{providerid}_configrefresh_cadence",
+                "settingInstanceTemplateReference": null,
+                "@odata.type": "#microsoft.graph.deviceManagementConfigurationSimpleSettingInstance",
+                "simpleSettingValue": {
+                  "value": 30,
+                  "settingValueTemplateReference": null,
+                  "@odata.type": "#microsoft.graph.deviceManagementConfigurationIntegerSettingValue"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "id": "0"
+    }
+  ]
+}

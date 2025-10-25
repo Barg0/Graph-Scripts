@@ -1,0 +1,95 @@
+{
+  "@odata.context": "https://graph.microsoft.com/beta/$metadata#deviceManagement/configurationPolicies/$entity",
+  "createdDateTime": "2025-09-14T10:55:04.9773171Z",
+  "creationSource": null,
+  "description": "",
+  "lastModifiedDateTime": "2025-10-25T16:25:31.8298269Z",
+  "name": "🔴 – 🌐 Network – Intranet Zone",
+  "platforms": "windows10",
+  "priorityMetaData": null,
+  "roleScopeTagIds": [
+    "0"
+  ],
+  "settingCount": 1,
+  "technologies": "mdm",
+  "id": "61a540f6-f35b-4c67-bbfe-8ddc0c162c31",
+  "templateReference": {
+    "templateFamily": "none",
+    "templateDisplayVersion": null,
+    "templateDisplayName": null,
+    "templateId": ""
+  },
+  "settings": [
+    {
+      "settingInstance": {
+        "choiceSettingValue": {
+          "value": "device_vendor_msft_policy_config_internetexplorer_allowsitetozoneassignmentlist_1",
+          "settingValueTemplateReference": null,
+          "children": [
+            {
+              "settingDefinitionId": "device_vendor_msft_policy_config_internetexplorer_allowsitetozoneassignmentlist_iz_zonemapprompt",
+              "settingInstanceTemplateReference": null,
+              "@odata.type": "#microsoft.graph.deviceManagementConfigurationGroupSettingCollectionInstance",
+              "groupSettingCollectionValue": [
+                {
+                  "settingValueTemplateReference": null,
+                  "children": [
+                    {
+                      "settingDefinitionId": "device_vendor_msft_policy_config_internetexplorer_allowsitetozoneassignmentlist_iz_zonemapprompt_key",
+                      "settingInstanceTemplateReference": null,
+                      "@odata.type": "#microsoft.graph.deviceManagementConfigurationSimpleSettingInstance",
+                      "simpleSettingValue": {
+                        "value": "ad.testitfirst.dev",
+                        "settingValueTemplateReference": null,
+                        "@odata.type": "#microsoft.graph.deviceManagementConfigurationStringSettingValue"
+                      }
+                    },
+                    {
+                      "settingDefinitionId": "device_vendor_msft_policy_config_internetexplorer_allowsitetozoneassignmentlist_iz_zonemapprompt_value",
+                      "settingInstanceTemplateReference": null,
+                      "@odata.type": "#microsoft.graph.deviceManagementConfigurationSimpleSettingInstance",
+                      "simpleSettingValue": {
+                        "value": "1",
+                        "settingValueTemplateReference": null,
+                        "@odata.type": "#microsoft.graph.deviceManagementConfigurationStringSettingValue"
+                      }
+                    }
+                  ]
+                },
+                {
+                  "settingValueTemplateReference": null,
+                  "children": [
+                    {
+                      "settingDefinitionId": "device_vendor_msft_policy_config_internetexplorer_allowsitetozoneassignmentlist_iz_zonemapprompt_key",
+                      "settingInstanceTemplateReference": null,
+                      "@odata.type": "#microsoft.graph.deviceManagementConfigurationSimpleSettingInstance",
+                      "simpleSettingValue": {
+                        "value": " https://ts01.ad.testitfirst.dev/rdweb/feed/webfeed.aspx",
+                        "settingValueTemplateReference": null,
+                        "@odata.type": "#microsoft.graph.deviceManagementConfigurationStringSettingValue"
+                      }
+                    },
+                    {
+                      "settingDefinitionId": "device_vendor_msft_policy_config_internetexplorer_allowsitetozoneassignmentlist_iz_zonemapprompt_value",
+                      "settingInstanceTemplateReference": null,
+                      "@odata.type": "#microsoft.graph.deviceManagementConfigurationSimpleSettingInstance",
+                      "simpleSettingValue": {
+                        "value": "1",
+                        "settingValueTemplateReference": null,
+                        "@odata.type": "#microsoft.graph.deviceManagementConfigurationStringSettingValue"
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        "settingDefinitionId": "device_vendor_msft_policy_config_internetexplorer_allowsitetozoneassignmentlist",
+        "settingInstanceTemplateReference": null,
+        "@odata.type": "#microsoft.graph.deviceManagementConfigurationChoiceSettingInstance"
+      },
+      "id": "0"
+    }
+  ]
+}

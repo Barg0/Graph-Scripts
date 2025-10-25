@@ -1,0 +1,37 @@
+{
+  "@odata.context": "https://graph.microsoft.com/beta/$metadata#deviceManagement/configurationPolicies/$entity",
+  "createdDateTime": "2025-10-19T15:07:54.058278Z",
+  "creationSource": null,
+  "description": "23.1 (L1) Ensure 'DO Download Mode' is NOT set to 'HTTP blended with Internet Peering'",
+  "lastModifiedDateTime": "2025-10-25T16:41:41.2151782Z",
+  "name": "🔴 – 🔒 Security – Delivery Optimization",
+  "platforms": "windows10",
+  "priorityMetaData": null,
+  "roleScopeTagIds": [
+    "0"
+  ],
+  "settingCount": 1,
+  "technologies": "mdm",
+  "id": "1b04e0a6-e6ca-46fd-bef5-3389cf159158",
+  "templateReference": {
+    "templateFamily": "none",
+    "templateDisplayVersion": null,
+    "templateDisplayName": null,
+    "templateId": ""
+  },
+  "settings": [
+    {
+      "settingInstance": {
+        "choiceSettingValue": {
+          "value": "device_vendor_msft_policy_config_deliveryoptimization_dodownloadmode_1",
+          "settingValueTemplateReference": null,
+          "children": []
+        },
+        "settingDefinitionId": "device_vendor_msft_policy_config_deliveryoptimization_dodownloadmode",
+        "settingInstanceTemplateReference": null,
+        "@odata.type": "#microsoft.graph.deviceManagementConfigurationChoiceSettingInstance"
+      },
+      "id": "0"
+    }
+  ]
+}

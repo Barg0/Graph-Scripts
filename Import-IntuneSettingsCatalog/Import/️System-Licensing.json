@@ -1,0 +1,37 @@
+{
+  "@odata.context": "https://graph.microsoft.com/beta/$metadata#deviceManagement/configurationPolicies/$entity",
+  "createdDateTime": "2025-10-19T14:54:52.0150865Z",
+  "creationSource": null,
+  "description": "47.1 (L2) Ensure 'Disallow KMS Client Online AVS Validation' is set to 'Allow'",
+  "lastModifiedDateTime": "2025-10-25T16:22:54.3549694Z",
+  "name": "🔴 – ⚙️ System – Licensing",
+  "platforms": "windows10",
+  "priorityMetaData": null,
+  "roleScopeTagIds": [
+    "0"
+  ],
+  "settingCount": 1,
+  "technologies": "mdm",
+  "id": "61377ae6-dac0-4e35-af8a-9591784e5e21",
+  "templateReference": {
+    "templateFamily": "none",
+    "templateDisplayVersion": null,
+    "templateDisplayName": null,
+    "templateId": ""
+  },
+  "settings": [
+    {
+      "settingInstance": {
+        "choiceSettingValue": {
+          "value": "device_vendor_msft_policy_config_licensing_disallowkmsclientonlineavsvalidation_1",
+          "settingValueTemplateReference": null,
+          "children": []
+        },
+        "settingDefinitionId": "device_vendor_msft_policy_config_licensing_disallowkmsclientonlineavsvalidation",
+        "settingInstanceTemplateReference": null,
+        "@odata.type": "#microsoft.graph.deviceManagementConfigurationChoiceSettingInstance"
+      },
+      "id": "0"
+    }
+  ]
+}
