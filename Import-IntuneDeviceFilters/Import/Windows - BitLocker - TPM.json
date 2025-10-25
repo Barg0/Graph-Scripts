@@ -1,0 +1,14 @@
+{
+  "platform": "windows10AndLater",
+  "lastModifiedDateTime": "2025-10-25T17:05:27.7650198Z",
+  "assignmentFilterManagementType": "devices",
+  "rule": "(device.deviceName -startsWith \"WS-\") or (device.deviceName -startsWith \"WS-MU-\") or (device.deviceName -startsWith \"NB-MU-\") or (device.deviceName -startsWith \"TB-MU-\")",
+  "roleScopeTags": [
+    "0"
+  ],
+  "displayName": "Windows - BitLocker - TPM",
+  "createdDateTime": "2025-10-25T17:05:27.7650198Z",
+  "id": "4cb89677-689a-4695-8c99-73726f7e7169",
+  "payloads": [],
+  "description": ""
+}
