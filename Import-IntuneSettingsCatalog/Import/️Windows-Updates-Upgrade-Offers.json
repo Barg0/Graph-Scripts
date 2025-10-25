@@ -4,7 +4,7 @@
   "creationSource": null,
   "description": "4.11.42.1 (L1) Ensure 'Turn off the offer to update to the latest version of Windows' is set to 'Enabled'",
   "lastModifiedDateTime": "2025-10-25T07:40:16.6770976Z",
-  "name": "🟢 – 🛠️ Windows Updates – Upgrade Offers",
+  "name": "🔴 – 🛠️ Windows Updates – Upgrade Offers",
   "platforms": "windows10",
   "priorityMetaData": null,
   "roleScopeTagIds": [
