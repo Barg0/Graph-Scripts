@@ -1,0 +1,42 @@
+{
+  "templateReference": {
+    "templateDisplayName": "Windows Security Experience",
+    "templateId": "d948ff9b-99cb-4ee0-8012-1fbc09685377_1",
+    "templateFamily": "endpointSecurityAntivirus",
+    "templateDisplayVersion": "Version 1"
+  },
+  "technologies": "mdm,microsoftSense",
+  "platforms": "windows10",
+  "name": "🔴 – 🛡️ Microsoft Defender – Tamper Protection",
+  "lastModifiedDateTime": "2025-11-02T11:57:39.3356892Z",
+  "id": "0aa4a6bb-791c-45d3-b1ef-2d6a832c45b5",
+  "createdDateTime": "2025-11-02T08:47:09.6186171Z",
+  "creationSource": null,
+  "settingCount": 1,
+  "priorityMetaData": null,
+  "roleScopeTagIds": [
+    "0"
+  ],
+  "description": "",
+  "settings": [
+    {
+      "settingInstance": {
+        "settingInstanceTemplateReference": {
+          "settingInstanceTemplateId": "5655cab2-7e6b-4c49-9ce2-3865da05f7e6"
+        },
+        "@odata.type": "#microsoft.graph.deviceManagementConfigurationChoiceSettingInstance",
+        "choiceSettingValue": {
+          "children": [],
+          "value": "vendor_msft_defender_configuration_tamperprotection_options_0",
+          "settingValueTemplateReference": {
+            "useTemplateDefault": false,
+            "settingValueTemplateId": "fc365da9-2c1b-4f79-aa4b-dedca69e728f"
+          }
+        },
+        "auditRuleInformation": null,
+        "settingDefinitionId": "vendor_msft_defender_configuration_tamperprotection_options"
+      },
+      "id": "0"
+    }
+  ]
+}
