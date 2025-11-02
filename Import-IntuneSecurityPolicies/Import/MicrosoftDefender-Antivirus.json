@@ -8,11 +8,11 @@
   "technologies": "mdm,microsoftSense",
   "platforms": "windows10",
   "name": "🔴 – 🛡️ Microsoft Defender – Antivirus",
-  "lastModifiedDateTime": "2025-11-02T11:57:02.3846583Z",
+  "lastModifiedDateTime": "2025-11-02T14:10:18.2610937Z",
   "id": "f7c81390-e6fa-4d02-99de-564ef0b4a32a",
   "createdDateTime": "2025-07-25T13:32:25.8270855Z",
   "creationSource": null,
-  "settingCount": 24,
+  "settingCount": 22,
   "priorityMetaData": null,
   "roleScopeTagIds": [
     "0"
@@ -255,7 +255,7 @@
         "@odata.type": "#microsoft.graph.deviceManagementConfigurationChoiceSettingInstance",
         "choiceSettingValue": {
           "children": [],
-          "value": "device_vendor_msft_policy_config_defender_cloudblocklevel_2",
+          "value": "device_vendor_msft_policy_config_defender_cloudblocklevel_4",
           "settingValueTemplateReference": {
             "useTemplateDefault": false,
             "settingValueTemplateId": "517b4e84-e933-42b9-b92f-00e640b1a82d"
@@ -383,31 +383,12 @@
     {
       "settingInstance": {
         "settingInstanceTemplateReference": {
-          "settingInstanceTemplateId": "087d3362-7e78-4983-96bc-1f4ea183f0e4"
-        },
-        "@odata.type": "#microsoft.graph.deviceManagementConfigurationChoiceSettingInstance",
-        "choiceSettingValue": {
-          "children": [],
-          "value": "device_vendor_msft_policy_config_defender_schedulescanday_0",
-          "settingValueTemplateReference": {
-            "useTemplateDefault": false,
-            "settingValueTemplateId": "7f4d9dda-6d48-4353-90ca-9fa7164c7215"
-          }
-        },
-        "auditRuleInformation": null,
-        "settingDefinitionId": "device_vendor_msft_policy_config_defender_schedulescanday"
-      },
-      "id": "19"
-    },
-    {
-      "settingInstance": {
-        "settingInstanceTemplateReference": {
           "settingInstanceTemplateId": "89879f27-6b7d-44d4-a08e-0a0de3e9663d"
         },
         "@odata.type": "#microsoft.graph.deviceManagementConfigurationSimpleSettingInstance",
         "simpleSettingValue": {
           "@odata.type": "#microsoft.graph.deviceManagementConfigurationIntegerSettingValue",
-          "value": 4,
+          "value": 1,
           "settingValueTemplateReference": {
             "useTemplateDefault": false,
             "settingValueTemplateId": "0af6bbed-a74a-4d08-8587-b16b10b774cb"
@@ -416,7 +397,7 @@
         "auditRuleInformation": null,
         "settingDefinitionId": "device_vendor_msft_policy_config_defender_signatureupdateinterval"
       },
-      "id": "20"
+      "id": "19"
     },
     {
       "settingInstance": {
@@ -435,7 +416,7 @@
         "auditRuleInformation": null,
         "settingDefinitionId": "device_vendor_msft_policy_config_defender_submitsamplesconsent"
       },
-      "id": "21"
+      "id": "20"
     },
     {
       "settingInstance": {
@@ -445,7 +426,7 @@
         "@odata.type": "#microsoft.graph.deviceManagementConfigurationChoiceSettingInstance",
         "choiceSettingValue": {
           "children": [],
-          "value": "device_vendor_msft_defender_configuration_disablelocaladminmerge_0",
+          "value": "device_vendor_msft_defender_configuration_disablelocaladminmerge_1",
           "settingValueTemplateReference": {
             "useTemplateDefault": false,
             "settingValueTemplateId": "3a9774b2-3143-47eb-bbca-d73c0ace2b7e"
@@ -454,26 +435,7 @@
         "auditRuleInformation": null,
         "settingDefinitionId": "device_vendor_msft_defender_configuration_disablelocaladminmerge"
       },
-      "id": "22"
-    },
-    {
-      "settingInstance": {
-        "settingInstanceTemplateReference": {
-          "settingInstanceTemplateId": "66d36baa-74ee-498d-958a-af477008c850"
-        },
-        "@odata.type": "#microsoft.graph.deviceManagementConfigurationSimpleSettingInstance",
-        "simpleSettingValue": {
-          "@odata.type": "#microsoft.graph.deviceManagementConfigurationIntegerSettingValue",
-          "value": 600,
-          "settingValueTemplateReference": {
-            "useTemplateDefault": false,
-            "settingValueTemplateId": "a204c511-6130-473a-b05f-93bda521aba9"
-          }
-        },
-        "auditRuleInformation": null,
-        "settingDefinitionId": "device_vendor_msft_policy_config_defender_schedulescantime"
-      },
-      "id": "23"
+      "id": "21"
     }
   ]
 }
