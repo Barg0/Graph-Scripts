@@ -1,0 +1,14 @@
+{
+  "description": "",
+  "id": "6968f3ca-5c11-4f52-90f4-780956f90ee7",
+  "platform": "windows10AndLater",
+  "assignmentFilterManagementType": "devices",
+  "payloads": [],
+  "displayName": "Windows - Entra joined - Multi-user",
+  "lastModifiedDateTime": "2025-11-18T07:29:40.1953854Z",
+  "rule": "(device.deviceTrustType -eq \"Azure AD joined\") and ((device.deviceName -startsWith \"WS-MU-\") or (device.deviceName -startsWith \"NB-MU-\") or (device.deviceName -startsWith \"TB-MU-\"))",
+  "roleScopeTags": [
+    "0"
+  ],
+  "createdDateTime": "2025-11-18T07:29:40.1953854Z"
+}
