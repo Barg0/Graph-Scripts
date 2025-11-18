@@ -1,0 +1,13 @@
+{
+  "displayName": "🔴 – 🔑 Windows Hello for Business – Provisioning",
+  "description": null,
+  "omaSettings": [
+    {
+      "displayName": "DisablePostLogonProvisioning",
+      "description": null,
+      "omaUri": "./Device/Vendor/MSFT/PassportForWork/{TenantID}/Policies/DisablePostLogonProvisioning",
+      "value": true,
+      "odataType": "#microsoft.graph.omaSettingBoolean"
+    }
+  ]
+}
