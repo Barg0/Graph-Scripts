@@ -10,11 +10,21 @@ $targetMailboxUpn = "contacts@yourdomain.com"
 
 # App-only Graph authentication (client secret)
 # REQUIRED APP PERMISSIONS (Application):
-#   - OrgContact.Read.All   (read org contacts /contacts)
+#   - Directory.Read.All    (read org contacts /contacts)
 #   - Contacts.ReadWrite    (manage personal contacts in user mailboxes)
 $tenantId     = "<YOUR-TENANT-ID>"
 $clientId     = "<YOUR-APP-CLIENT-ID>"
 $clientSecret = "<YOUR-CLIENT-SECRET>"   # Use a secure store in production
+
+# Email reporting configuration
+$enableEmailReport   = $true                     # Set to $false to disable email reporting
+$reportSmtpServer    = "smtp.yourdomain.com"     # SMTP server
+$reportSmtpPort      = 587                       # SMTP port (25, 587, 2525, etc.)
+$reportUseSsl        = $true                     # Use SSL/TLS for SMTP
+$reportFrom          = "noreply@yourdomain.com"  # Sender address
+$reportTo            = "admin@yourdomain.com"    # Recipient(s), comma-separated if multiple
+$reportSubject       = "Contact sync report"
+$reportSmtpCredential = $null                    # Optional: set to Get-Credential if auth is required
 
 # ---------------------------[ Script name ]---------------------------
 
@@ -160,7 +170,108 @@ function Test-MicrosoftGraphConnection {
     }
 }
 
-# ---------------------------[ Helper Functions ]---------------------------
+# ---------------------------[ Helper: Email Report ]---------------------------
+
+function Send-ContactSyncReport {
+    param(
+        [int]$TotalContacts,
+        [int]$CreatedCount,
+        [int]$UpdatedCount,
+        [int]$SkippedCount,
+        [int]$ErrorCount,
+        [string[]]$CreatedContacts,
+        [string[]]$UpdatedContacts,
+        [string[]]$SkippedContacts,
+        [string[]]$ErrorContacts
+    )
+
+    if (-not $enableEmailReport) {
+        Write-Log "Email reporting is disabled. Skipping report." -Tag "Info"
+        return
+    }
+
+    if ([string]::IsNullOrWhiteSpace($reportSmtpServer) -or
+        [string]::IsNullOrWhiteSpace($reportFrom)       -or
+        [string]::IsNullOrWhiteSpace($reportTo)) {
+
+        Write-Log "Email report configuration incomplete (SMTP/From/To). Skipping report." -Tag "Error"
+        return
+    }
+
+    $bodyLines = @()
+    $bodyLines += "Contact sync report $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')"
+    $bodyLines += ""
+    $bodyLines += "Summary:"
+    $bodyLines += "  Total:   $TotalContacts"
+    $bodyLines += "  Created: $CreatedCount"
+    $bodyLines += "  Updated: $UpdatedCount"
+    $bodyLines += "  Skipped: $SkippedCount"
+    $bodyLines += "  Errors:  $ErrorCount"
+    $bodyLines += ""
+
+    if ($CreatedContacts.Count -gt 0) {
+        $bodyLines += "Created contacts:"
+        foreach ($entry in $CreatedContacts) {
+            $bodyLines += "  - $entry"
+        }
+        $bodyLines += ""
+    }
+
+    if ($UpdatedContacts.Count -gt 0) {
+        $bodyLines += "Updated contacts:"
+        foreach ($entry in $UpdatedContacts) {
+            $bodyLines += "  - $entry"
+        }
+        $bodyLines += ""
+    }
+
+    if ($SkippedContacts.Count -gt 0) {
+        $bodyLines += "Skipped contacts:"
+        foreach ($entry in $SkippedContacts) {
+            $bodyLines += "  - $entry"
+        }
+        $bodyLines += ""
+    }
+
+    if ($ErrorContacts.Count -gt 0) {
+        $bodyLines += "Contacts with errors:"
+        foreach ($entry in $ErrorContacts) {
+            $bodyLines += "  - $entry"
+        }
+        $bodyLines += ""
+    }
+
+    $body = [string]::Join("`r`n", $bodyLines)
+
+    try {
+        Write-Log "Sending contact sync report to '$reportTo' via '$($reportSmtpServer):$reportSmtpPort'..." -Tag "Info"
+
+        $sendMailParams = @{
+            SmtpServer = $reportSmtpServer
+            Port       = $reportSmtpPort
+            From       = $reportFrom
+            To         = $reportTo
+            Subject    = $reportSubject
+            Body       = $body
+        }
+
+        if ($reportUseSsl) {
+            $sendMailParams["UseSsl"] = $true
+        }
+
+        if ($null -ne $reportSmtpCredential) {
+            $sendMailParams["Credential"] = $reportSmtpCredential
+        }
+
+        Send-MailMessage @sendMailParams
+
+        Write-Log "Contact sync report sent successfully." -Tag "Success"
+    } catch {
+        Write-Log "Failed to send contact sync report: $_" -Tag "Error"
+    }
+}
+
+# ---------------------------[ Helper: Data Functions ]---------------------------
 
 function Get-DirectoryOrgContacts {
     <#
@@ -549,12 +660,18 @@ function Invoke-OrgContactSync {
     $skippedCount  = 0
     $errorCount    = 0
 
+    $createdContactsList = @()
+    $updatedContactsList = @()
+    $skippedContactsList = @()
+    $errorContactsList   = @()
+
     foreach ($orgContact in $orgContacts) {
 
         $primaryEmail = $orgContact.Mail
         if ([string]::IsNullOrWhiteSpace($primaryEmail)) {
             Write-Log "orgContact '$($orgContact.Id)' has no Mail property. Skipping." -Tag "Debug"
             $skippedCount++
+            $skippedContactsList += "NO-EMAIL (Id: $($orgContact.Id))"
             continue
         }
 
@@ -567,9 +684,11 @@ function Invoke-OrgContactSync {
                 Write-Log "Creating new contact for '$primaryEmail' in mailbox '$TargetMailboxUpn'." -Tag "Info"
                 New-MgUserContact -UserId $TargetMailboxUpn -BodyParameter $desiredBody | Out-Null
                 $createdCount++
+                $createdContactsList += $primaryEmail
             } catch {
                 Write-Log "Failed to create contact for '$primaryEmail': $_" -Tag "Error"
                 $errorCount++
+                $errorContactsList += $primaryEmail
             }
 
         } else {
@@ -580,6 +699,7 @@ function Invoke-OrgContactSync {
             if ($updateBody.Keys.Count -eq 0) {
                 Write-Log "Contact '$primaryEmail' already up to date. Skipping." -Tag "Debug"
                 $skippedCount++
+                $skippedContactsList += $primaryEmail
                 continue
             }
 
@@ -587,14 +707,27 @@ function Invoke-OrgContactSync {
                 Write-Log "Updating contact '$primaryEmail' in mailbox '$TargetMailboxUpn' (fields: $($updateBody.Keys -join ', '))." -Tag "Info"
                 Update-MgUserContact -UserId $TargetMailboxUpn -ContactId $existingContact.Id -BodyParameter $updateBody | Out-Null
                 $updatedCount++
+                $updatedContactsList += $primaryEmail
             } catch {
                 Write-Log "Failed to update contact '$primaryEmail': $_" -Tag "Error"
                 $errorCount++
+                $errorContactsList += $primaryEmail
             }
         }
     }
 
     Write-Log "Sync summary: Total=$totalContacts | Created=$createdCount | Updated=$updatedCount | Skipped=$skippedCount | Errors=$errorCount" -Tag "Success"
+
+    # Send summary report via email
+    Send-ContactSyncReport -TotalContacts $totalContacts `
+                           -CreatedCount $createdCount `
+                           -UpdatedCount $updatedCount `
+                           -SkippedCount $skippedCount `
+                           -ErrorCount $errorCount `
+                           -CreatedContacts $createdContactsList `
+                           -UpdatedContacts $updatedContactsList `
+                           -SkippedContacts $skippedContactsList `
+                           -ErrorContacts $errorContactsList
 }
 
 # ---------------------------[ Main Execution ]---------------------------
