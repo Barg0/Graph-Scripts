@@ -768,7 +768,7 @@ function Invoke-OrgContactSync {
         Write-Log "Deletion of mailbox contacts is disabled (`$enableDeletion = `$false)." -Tag "Info"
     }
 
-    Write-Log "Sync summary: TotalOrgContacts=$totalContacts | Created=$createdCount | Updated=$updatedCount | Skipped=$skippedCount | Deleted=$deletedCount | Errors=$errorCount" -Tag "Success"
+    Write-Log "Sync summary: Total=$totalContacts | Created=$createdCount | Updated=$updatedCount | Skipped=$skippedCount | Deleted=$deletedCount | Errors=$errorCount" -Tag "Success"
 
     # Send summary report via email
     Send-ContactSyncReport -TotalContacts $totalContacts `
