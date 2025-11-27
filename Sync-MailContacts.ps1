@@ -16,28 +16,31 @@ $tenantId     = "<YOUR-TENANT-ID>"
 $clientId     = "<YOUR-APP-CLIENT-ID>"
 $clientSecret = "<YOUR-CLIENT-SECRET>"   # Use a secure store in production
 
+# Enable deletion of mailbox contacts that no longer exist as orgContacts
+$enableDeletion = $true   # Set to $false if you want to disable deletions
+
 # Email reporting configuration
-$enableEmailReport   = $true                     # Set to $false to disable email reporting
-$reportSmtpServer    = "smtp.yourdomain.com"     # SMTP server
-$reportSmtpPort      = 587                       # SMTP port (25, 587, 2525, etc.)
-$reportUseSsl        = $true                     # Use SSL/TLS for SMTP
-$reportFrom          = "noreply@yourdomain.com"  # Sender address
-$reportTo            = "admin@yourdomain.com"    # Recipient(s), comma-separated if multiple
-$reportSubject       = "Contact sync report"
-$reportSmtpCredential = $null                    # Optional: set to Get-Credential if auth is required
+$enableEmailReport    = $true                     # Set to $false to disable email reporting
+$reportSmtpServer     = "smtp.yourdomain.com"     # SMTP server
+$reportSmtpPort       = 587                       # SMTP port (25, 587, 2525, etc.)
+$reportUseSsl         = $true                     # Use SSL/TLS for SMTP
+$reportFrom           = "noreply@yourdomain.com"  # Sender address
+$reportTo             = "admin@yourdomain.com"    # Recipient(s), comma-separated if multiple
+$reportSubject        = "Contact sync report"
+$reportSmtpCredential = $null                     # Optional: set to Get-Credential if auth is required
 
 # ---------------------------[ Script name ]---------------------------
 
 # Script name used for folder/log naming
 $scriptName  = "Sync-MailContacts"
-$logFileName = "$($scriptName).log"
+$logFileName = "$scriptName.log"
 
 # ---------------------------[ Logging Setup ]---------------------------
 
 # Logging control switches
-$log                   = $true      # Set to $false to disable logging in shell
-$enableLogFile         = $false     # Set to $false to disable file output
-$enableComparisonDebug = $false     # Set to $true to log property-level comparisons
+$log        = $true   # Set to $false to disable ALL console logging
+$enableLogFile = $false   # Set to $false to disable file logging
+$logDebug   = $false  # Set to $true to enable debug logging
 
 # Define the log output location
 $logFileDirectory = "$PSScriptRoot"
@@ -50,24 +53,21 @@ if ($enableLogFile -and -not (Test-Path $logFileDirectory)) {
 
 # Function to write structured logs to file and console
 function Write-Log {
+    [CmdletBinding()]
     param (
         [string]$Message,
         [string]$Tag = "Info"
     )
 
-    if (-not $log) {
-        return
-    }
+    if (-not $log) { return }
+
+    # Suppress debug entries when $logDebug = $false
+    if ($Tag -eq "Debug" -and -not $logDebug) { return }
 
     $timestamp = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
     $tagList   = @("Start", "Check", "Info", "Success", "Error", "Debug", "End")
-    $rawTag    = $Tag.Trim()
 
-    if ($tagList -contains $rawTag) {
-        $rawTag = $rawTag.PadRight(7)
-    } else {
-        $rawTag = "Error  "
-    }
+    $rawTag = if ($tagList -contains $Tag) { $Tag.PadRight(7) } else { "Error  " }
 
     $color = switch ($rawTag.Trim()) {
         "Start"   { "Cyan" }
@@ -82,10 +82,12 @@ function Write-Log {
 
     $logMessage = "$timestamp [  $rawTag ] $Message"
 
+    # Write to file
     if ($enableLogFile) {
-        "$logMessage" | Out-File -FilePath $logFile -Append
+        $logMessage | Out-File -FilePath $logFile -Append
     }
 
+    # Write to console
     Write-Host "$timestamp " -NoNewline
     Write-Host "[  " -NoNewline -ForegroundColor White
     Write-Host "$rawTag" -NoNewline -ForegroundColor $color
@@ -96,24 +98,24 @@ function Write-Log {
 # ---------------------------[ Exit Function ]---------------------------
 
 function Complete-Script {
-    param(
-        [int]$ExitCode
-    )
+    param([int]$ExitCode)
 
     $scriptEndTime = Get-Date
     $duration      = $scriptEndTime - $scriptStartTime
 
-    Write-Log "Script execution time: $($duration.ToString("hh\:mm\:ss\.ff"))" -Tag "Info"
+    Write-Log "Script execution time: $($duration.ToString('hh\:mm\:ss\.ff'))" -Tag "Info"
     Write-Log "Exit Code: $ExitCode" -Tag "Info"
     Write-Log "======== Script Completed ========" -Tag "End"
+
     exit $ExitCode
 }
 
-# ---------------------------[ Start ]---------------------------
+# ---------------------------[ Script Start ]---------------------------
 
 Write-Log "======== Script Started ========" -Tag "Start"
 Write-Log "ComputerName: $env:COMPUTERNAME | User: $env:USERNAME | Script: $scriptName" -Tag "Info"
 
+# Basic config validation
 if ([string]::IsNullOrWhiteSpace($targetMailboxUpn)) {
     Write-Log "Target mailbox UPN is not configured. Please set `$targetMailboxUpn in the configuration section." -Tag "Error"
     Complete-Script -ExitCode 1
@@ -178,10 +180,12 @@ function Send-ContactSyncReport {
         [int]$CreatedCount,
         [int]$UpdatedCount,
         [int]$SkippedCount,
+        [int]$DeletedCount,
         [int]$ErrorCount,
         [string[]]$CreatedContacts,
         [string[]]$UpdatedContacts,
         [string[]]$SkippedContacts,
+        [string[]]$DeletedContacts,
         [string[]]$ErrorContacts
     )
 
@@ -206,6 +210,7 @@ function Send-ContactSyncReport {
     $bodyLines += "  Created: $CreatedCount"
     $bodyLines += "  Updated: $UpdatedCount"
     $bodyLines += "  Skipped: $SkippedCount"
+    $bodyLines += "  Deleted: $DeletedCount"
     $bodyLines += "  Errors:  $ErrorCount"
     $bodyLines += ""
 
@@ -220,6 +225,14 @@ function Send-ContactSyncReport {
     if ($UpdatedContacts.Count -gt 0) {
         $bodyLines += "Updated contacts:"
         foreach ($entry in $UpdatedContacts) {
+            $bodyLines += "  - $entry"
+        }
+        $bodyLines += ""
+    }
+
+    if ($DeletedContacts.Count -gt 0) {
+        $bodyLines += "Deleted contacts:"
+        foreach ($entry in $DeletedContacts) {
             $bodyLines += "  - $entry"
         }
         $bodyLines += ""
@@ -244,7 +257,7 @@ function Send-ContactSyncReport {
     $body = [string]::Join("`r`n", $bodyLines)
 
     try {
-        Write-Log "Sending contact sync report to '$reportTo' via '$($reportSmtpServer):$reportSmtpPort'..." -Tag "Info"
+        Write-Log "Sending contact sync report to '$reportTo' via '$($reportSmtpServer):$($reportSmtpPort)'..." -Tag "Info"
 
         $sendMailParams = @{
             SmtpServer = $reportSmtpServer
@@ -284,10 +297,10 @@ function Get-DirectoryOrgContacts {
         $orgContacts = Get-MgContact -All -Property `
             "id,displayName,givenName,surname,companyName,department,jobTitle,mail,mailNickname,addresses,phones,imAddresses"
 
-        Write-Log "Retrieved $($orgContacts.Count) orgContacts from directory." -Tag "Success"
+        Write-Log "Retrieved $($orgContacts.Count) contacts from directory." -Tag "Success"
         return $orgContacts
     } catch {
-        Write-Log "Failed to retrieve orgContacts: $_" -Tag "Error"
+        Write-Log "Failed to retrieve contacts: $_" -Tag "Error"
         Complete-Script -ExitCode 1
     }
 }
@@ -296,7 +309,9 @@ function Get-MailboxContactIndex {
     <#
         .SYNOPSIS
         Retrieves all personal contacts from the target mailbox via Graph
-        and returns a hashtable indexed by primary email address (lowercase).
+        and returns a PSCustomObject with:
+          - Index: hashtable indexed by primary email (lowercase)
+          - Contacts: full contact list
     #>
     param(
         [Parameter(Mandatory = $true)]
@@ -327,7 +342,10 @@ function Get-MailboxContactIndex {
 
         Write-Log "Retrieved $($mailboxContacts.Count) existing contacts from mailbox and indexed $($contactIndex.Count) by email." -Tag "Success"
 
-        return $contactIndex
+        return [PSCustomObject]@{
+            Index    = $contactIndex
+            Contacts = $mailboxContacts
+        }
     } catch {
         Write-Log "Failed to retrieve existing mailbox contacts: $_" -Tag "Error"
         Complete-Script -ExitCode 1
@@ -532,9 +550,7 @@ function Get-ContactUpdateBody {
                     Convert-ToNormalizedString -Value $_
                 })
 
-                if ($enableComparisonDebug) {
-                    Write-Log "Compare businessPhones: Desired='$desiredString' Existing='$existingString'" -Tag "Debug"
-                }
+                Write-Log "Compare businessPhones: Desired='$desiredString' Existing='$existingString'" -Tag "Debug"
 
                 if ($desiredString -ne $existingString) {
                     $updateBody[$property] = $DesiredBody[$property]
@@ -552,9 +568,7 @@ function Get-ContactUpdateBody {
                     Convert-ToNormalizedString -Value $_
                 })
 
-                if ($enableComparisonDebug) {
-                    Write-Log "Compare imAddresses: Desired='$desiredString' Existing='$existingString'" -Tag "Debug"
-                }
+                Write-Log "Compare imAddresses: Desired='$desiredString' Existing='$existingString'" -Tag "Debug"
 
                 if ($desiredString -ne $existingString) {
                     $updateBody[$property] = $DesiredBody[$property]
@@ -573,9 +587,7 @@ function Get-ContactUpdateBody {
                     $existingEmail = Convert-ToNormalizedString -Value $ExistingContact.EmailAddresses[0].Address
                 }
 
-                if ($enableComparisonDebug) {
-                    Write-Log "Compare emailAddresses: Desired='$desiredEmail' Existing='$existingEmail'" -Tag "Debug"
-                }
+                Write-Log "Compare emailAddresses: Desired='$desiredEmail' Existing='$existingEmail'" -Tag "Debug"
 
                 if ($desiredEmail -ne $existingEmail) {
                     $updateBody[$property] = $DesiredBody[$property]
@@ -606,9 +618,7 @@ function Get-ContactUpdateBody {
                     ) -join "|"
                 }
 
-                if ($enableComparisonDebug) {
-                    Write-Log "Compare businessAddress: Desired='$desiredString' Existing='$existingString'" -Tag "Debug"
-                }
+                Write-Log "Compare businessAddress: Desired='$desiredString' Existing='$existingString'" -Tag "Debug"
 
                 if ($desiredString -ne $existingString) {
                     $updateBody[$property] = $DesiredBody[$property]
@@ -625,9 +635,7 @@ function Get-ContactUpdateBody {
                 $desiredValue  = Convert-ToNormalizedString -Value $DesiredBody[$property]
                 $existingValue = Convert-ToNormalizedString -Value $ExistingContact.$graphPropertyName
 
-                if ($enableComparisonDebug) {
-                    Write-Log "Compare $property ($graphPropertyName): Desired='$desiredValue' Existing='$existingValue'" -Tag "Debug"
-                }
+                Write-Log "Compare $property ($graphPropertyName): Desired='$desiredValue' Existing='$existingValue'" -Tag "Debug"
 
                 if ($desiredValue -ne $existingValue) {
                     $updateBody[$property] = $DesiredBody[$property]
@@ -649,21 +657,28 @@ function Invoke-OrgContactSync {
         [string]$TargetMailboxUpn
     )
 
-    Write-Log "Starting sync of orgContacts into mailbox '$TargetMailboxUpn'..." -Tag "Info"
+    Write-Log "Starting sync of Contacts into mailbox '$TargetMailboxUpn'..." -Tag "Info"
 
-    $orgContacts         = Get-DirectoryOrgContacts
-    $mailboxContactIndex = Get-MailboxContactIndex -UserId $TargetMailboxUpn
+    $orgContacts           = Get-DirectoryOrgContacts
+    $mailboxContactsResult = Get-MailboxContactIndex -UserId $TargetMailboxUpn
+    $mailboxContactIndex   = $mailboxContactsResult.Index
+    $mailboxContacts       = $mailboxContactsResult.Contacts
 
     $totalContacts = $orgContacts.Count
     $createdCount  = 0
     $updatedCount  = 0
     $skippedCount  = 0
+    $deletedCount  = 0
     $errorCount    = 0
 
     $createdContactsList = @()
     $updatedContactsList = @()
     $skippedContactsList = @()
+    $deletedContactsList = @()
     $errorContactsList   = @()
+
+    # Build set of source emails from orgContacts
+    $sourceEmailSet = @{}
 
     foreach ($orgContact in $orgContacts) {
 
@@ -675,7 +690,11 @@ function Invoke-OrgContactSync {
             continue
         }
 
-        $emailKey    = $primaryEmail.ToLowerInvariant()
+        $emailKey = $primaryEmail.ToLowerInvariant()
+        if (-not $sourceEmailSet.ContainsKey($emailKey)) {
+            $sourceEmailSet[$emailKey] = $true
+        }
+
         $desiredBody = Get-DesiredContactBody -OrgContact $orgContact
 
         if (-not $mailboxContactIndex.ContainsKey($emailKey)) {
@@ -716,17 +735,52 @@ function Invoke-OrgContactSync {
         }
     }
 
-    Write-Log "Sync summary: Total=$totalContacts | Created=$createdCount | Updated=$updatedCount | Skipped=$skippedCount | Errors=$errorCount" -Tag "Success"
+    # Handle deletions: mailbox contacts that are no longer present as orgContacts
+    if ($enableDeletion) {
+        Write-Log "Checking for mailbox contacts that no longer exist as Contacts (deletions)..." -Tag "Info"
+
+        foreach ($mailboxContact in $mailboxContacts) {
+            if ($null -eq $mailboxContact.EmailAddresses -or $mailboxContact.EmailAddresses.Count -eq 0) {
+                continue
+            }
+
+            $mbEmail = $mailboxContact.EmailAddresses[0].Address
+            if ([string]::IsNullOrWhiteSpace($mbEmail)) {
+                continue
+            }
+
+            $mbKey = $mbEmail.ToLowerInvariant()
+
+            if (-not $sourceEmailSet.ContainsKey($mbKey)) {
+                try {
+                    Write-Log "Deleting mailbox contact '$mbEmail' because no matching orgContact exists." -Tag "Info"
+                    Remove-MgUserContact -UserId $TargetMailboxUpn -ContactId $mailboxContact.Id -Confirm:$false
+                    $deletedCount++
+                    $deletedContactsList += $mbEmail
+                } catch {
+                    Write-Log "Failed to delete mailbox contact '$mbEmail': $_" -Tag "Error"
+                    $errorCount++
+                    $errorContactsList += $mbEmail
+                }
+            }
+        }
+    } else {
+        Write-Log "Deletion of mailbox contacts is disabled (`$enableDeletion = `$false)." -Tag "Info"
+    }
+
+    Write-Log "Sync summary: TotalOrgContacts=$totalContacts | Created=$createdCount | Updated=$updatedCount | Skipped=$skippedCount | Deleted=$deletedCount | Errors=$errorCount" -Tag "Success"
 
     # Send summary report via email
     Send-ContactSyncReport -TotalContacts $totalContacts `
                            -CreatedCount $createdCount `
                            -UpdatedCount $updatedCount `
                            -SkippedCount $skippedCount `
+                           -DeletedCount $deletedCount `
                            -ErrorCount $errorCount `
                            -CreatedContacts $createdContactsList `
                            -UpdatedContacts $updatedContactsList `
                            -SkippedContacts $skippedContactsList `
+                           -DeletedContacts $deletedContactsList `
                            -ErrorContacts $errorContactsList
 }
 
